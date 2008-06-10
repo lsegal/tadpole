@@ -38,7 +38,7 @@ describe Templater, '.create_template' do
     Templater::Template_new_template.ancestors.should == [Templater::Template_new_template, 
       Templater::Template_b_new_template, Templater::Template_a_new_template, 
       Templater::Template_b_new, Templater::Template_a_new, Templater::TemplatePath,
-      Templater::Template, Templater::Template::RenderMixin]
+      Templater::Template]
   end
 end
 

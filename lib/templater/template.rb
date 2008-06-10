@@ -1,80 +1,19 @@
-require 'rubygems'
-
-class Templater
+module Templater
   module Template
-    module RenderMixin
-      def erb(filename, locals = {})
-        require 'erb'
-        contents = template_contents(filename)
-        ERB.new(contents, nil, '<>').result(locals_binding(locals))
-      end
-
-      def haml(filename, locals = {})
-        require 'haml'
-        contents = template_contents(filename)
-        Haml::Engine.new(contents).render(self, locals)
-      end
-
-      def markaby()
-      end
-      
-      def asset(filename)
-        template_contents(filename)
-      end
-
-      def tpl(*section)
-        if section.first == self
-          section.shift
-          Templater.create_template(*(path + section)).new(*args).run
-        else
-          Templater.create_template(*section).new(*args).run
-        end
-      end
-      
-      def render(filename, locals = {}, type = nil)
-        case File.extname(filename)[1..-1]
-        when "haml"
-          type = :haml
-        when "mab"
-          type = :markaby
-        when "erb"
-          type = :erb
-        else
-          type = :asset
-        end unless type
-
-        if method(type)
-          if method(type).arity == 2
-            send(type, filename, locals)
-          else
-            send(type, filename)
-          end
-        else
-          raise ArgumentError, "no render handler for filetype `#{type}', file `#{filename}'"
-        end
-      end
-      
-      private
-      
-      def locals_binding(locals = {})
-        instance_eval locals.map {|k,v| "#{k} = #{v.inspect}" }.join(";")
-        binding
-      end
-    end
-    
     module ClassMethods
-      attr_accessor :path, :template_paths
+      attr_accessor :path, :template_paths, :sections
       
-      def run(*args)
-        new(*args).run
+      def run(*args, &block)
+        new(*args).run(&block)
       end
       
-      def new(*args, &block)
+      def new(opts = {}, &block)
         obj = Object.new.extend(self)
         class << obj; extend ClassMethods end
         obj.instance_eval "def class; #{self} end"
-        obj.args = args 
-        obj.init(*args, &block)
+        obj.options = opts
+        obj.sections(*sections)
+        obj.init(&block)
         obj
       end
     end
@@ -83,27 +22,46 @@ class Templater
       klass.extend(ClassMethods)
     end
     
-    attr_accessor :args
-
-    include RenderMixin
+    attr_accessor :options
     
-    def template_paths; self.class.template_paths end
-    def path; self.class.path end
+    def options; @options ||= {} end
     
-    def sections(*new_sections)
-      if new_sections.empty? 
-        @sections 
-      else
-        @sections = [new_sections].flatten
+    def options=(hash)
+      hash.each do |k, v|
+        options[k.to_sym] = v
       end
     end
     
-    def init(*args) end
+    def method_missing(meth, *args, &block)
+      if options.has_key?(meth)
+        options[meth]
+      elsif meth.to_s =~ /=$/ && options.has_key?(meth.to_s.gsub(/=$/, ''))
+        options[meth] = *args
+      else
+        super
+      end
+    end
 
-    def run(*args)
-      sections.map do |section|
-        run_section(section)
-      end.join
+    def template_paths; self.class.template_paths end
+    def path; self.class.path end
+
+    def sections(*new_sections)
+      if new_sections.empty? 
+        @sections 
+      elsif new_sections.size == 1 && new_sections.first.is_a?(Array)
+        @sections = new_sections.first
+      else
+        @sections = new_sections
+      end
+    end
+    
+    def init(&block); end
+
+    def run(opts = {}, &block)
+      old_opts = options.dup
+      self.options.update(opts)
+      run_sections(sections, &block)
+      options.replace(old_opts)
     rescue => e
       me = NoMethodError.new("In #{self.inspect}: #{e.message}")
       me.set_backtrace(e.backtrace)
@@ -111,21 +69,35 @@ class Templater
     end
     alias to_s run
     
-    def run_section(section)
-      #puts "#{self.inspect} Running section #{section} #{self.class.ancestors.inspect}"
+    def run_sections(sects, &block)
+      out = ''
+      sects = sects.first if sects.first.is_a?(Array)
+      sects.each_with_index do |section, i|
+        next if section.is_a?(Array)
+        if sects[i+1].is_a?(Array)
+          out += render(section) { render(sects[i+1], &block) }
+        else
+          out += render(section, &block)
+        end
+      end
+      out
+    end
+    
+    def render(section, &block)
+      puts "#{self.inspect} Running section #{section} #{self.class.ancestors.inspect}"
       case section
       when String
-        render(section)
+        find_section_provider(section).render
       when Symbol
         if respond_to? section
-          send(section)
+          send(section, &block)
         else
-          Templater.create_template(*(path + [section])).new.run(*args)
+          Templater.create_template(*(path + [section])).new(options).run(&block)
         end
       when Template
-        section.run(*args)
+        section.run(&block)
       when Module
-        section.new(*args).run
+        section.new(*args).run(&block)
       else
         raise ArgumentError, "invalid section #{section.inspect}"
       end
@@ -134,6 +106,26 @@ class Templater
     def inspect; "#<Template:0x#{object_id.to_s(16)} path='#{self.path.join('/')}' sections=#{sections.inspect}>" end
     
     private
+    
+    def find_section_provider(section)
+      @providers ||= {}
+      return @providers[section] if @providers[section]
+      
+      filename, provider = section, nil
+      if find_template(section)
+        provider = SectionProviders.default_provider
+      else
+        SectionProviders.providers.each do |ext, prov|
+          filename = "#{section}.#{ext}"
+          if find_template(filename)
+            break provider = prov
+          end
+        end
+      end
+      
+      raise ArgumentError, "missing section `#{section}'" if !provider
+      @providers[section] = provider.new(template_contents(filename), self)
+    end
     
     def find_template(filename)
       template_paths.each do |template_path|
@@ -151,109 +143,4 @@ class Templater
       end
     end
   end
-  
-  module TemplatePath
-    module ClassMethods
-      def template_paths; @template_paths ||= [] end
-      
-      def inherits(*templates)
-        if templates.first.is_a?(Symbol) || templates.first.is_a?(String)
-          mod = Templater.create_template(*templates)
-          include mod
-          template_paths.push(*mod.template_paths)
-        else
-          include(*templates)
-        end
-      end
-    end
-    
-    def self.included(klass)
-      klass.extend ClassMethods
-    end
-  end
-
-  class << self
-    attr_accessor :caching
-    
-    def cache; @caching ||= true end
-    
-    def template_paths
-      @@template_paths ||= []
-    end
-    
-    def register_template_path(path)
-      template_paths.push(path)
-    end
-    
-    def create_template(*path)
-      if path.size == 1 && path.first.is_a?(String)
-        path = path.first.split('/')
-      end
-      name = template_class_name(*path)
-      return const_get(name) if Templater.cache rescue NameError
-      
-      exists = find_matching_template_paths(*path)
-      if exists.empty?
-        raise ArgumentError, "no such template `#{path.join(File::SEPARATOR)}'"
-      end
-      
-      mod = Module.new
-      mod.send(:include, Template)
-      mod.path = path
-      
-      path = path.flatten
-      path.inject([]) do |list, el|
-        list << el
-        find_matching_template_paths(*list).each do |subpath|
-          submod = load_setup_rb(subpath)
-          mod.send :include, submod
-          if list == path
-            mod.template_paths = submod.template_paths
-          end
-        end
-        list
-      end
-      
-      Templater.caching ? const_set(name, mod) : mod
-    end
-    
-    private
-    
-    def create_template_mod(full_path)
-      name = template_mod_name(full_path)
-      return const_get(name) if Templater.cache rescue NameError
-      mod = Module.new
-      mod.send(:include, TemplatePath)
-      mod.template_paths.push(full_path)
-      Templater.cache ? const_set(name, mod) : mod
-    end
-    
-    def find_matching_template_paths(*path)
-      path = path.flatten.join(File::SEPARATOR)
-      template_paths.map do |template_path|
-        full_path = File.join(template_path, path)
-        File.directory?(full_path) ? full_path : nil
-      end.compact
-    end
-    
-    def load_setup_rb(full_path, mod = nil)
-      mod = create_template_mod(full_path) unless mod 
-      
-      setup_file = File.join(full_path, 'setup.rb')
-      if File.file? setup_file
-        mod.module_eval File.read(setup_file).taint
-      end
-      mod
-    end
-
-    def template_mod_name(full_path)
-      'Template_' + full_path.split(/\/+/).map {|p| p =~ /^\.{1,2}$/ ? '' : p }.compact.join('_')
-    end
-    
-    def template_class_name(*path)
-      'Template_' + path.join('_')
-    end
-  end
 end
-
-def T(*path) Templater.create_template(*path) end

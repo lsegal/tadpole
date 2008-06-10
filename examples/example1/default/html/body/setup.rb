@@ -1,7 +1,4 @@
-def init(object)
-  super
-  sections 'info.erb', :copyright
-end
+sections 'info.erb', :copyright
 
 def copyright; "<div id='copyright'>Copyright 2008 Loren Segal</div>" end
 
