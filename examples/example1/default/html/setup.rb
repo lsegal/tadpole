@@ -1,4 +1,4 @@
 def init(object)
   super
-  sections haml('main.haml')
+  sections 'main.haml'
 end

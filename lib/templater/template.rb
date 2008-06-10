@@ -6,7 +6,6 @@ class Templater
       def erb(filename, locals = {})
         require 'erb'
         contents = template_contents(filename)
-        p ERB.new(contents, nil, '<>').src
         ERB.new(contents, nil, '<>').result(locals_binding(locals))
       end
 
@@ -24,11 +23,34 @@ class Templater
       end
 
       def tpl(*section)
-        if path.first == self
+        if section.first == self
           section.shift
-          Templater.create_template(*(path + section)).new.run(*args)
+          Templater.create_template(*(path + section)).new(*args).run
         else
-          Templater.create_template(*path).new.run(*args)
+          Templater.create_template(*section).new(*args).run
+        end
+      end
+      
+      def render(filename, locals = {}, type = nil)
+        case File.extname(filename)[1..-1]
+        when "haml"
+          type = :haml
+        when "mab"
+          type = :markaby
+        when "erb"
+          type = :erb
+        else
+          type = :asset
+        end unless type
+
+        if method(type)
+          if method(type).arity == 2
+            send(type, filename, locals)
+          else
+            send(type, filename)
+          end
+        else
+          raise ArgumentError, "no render handler for filetype `#{type}', file `#{filename}'"
         end
       end
       
@@ -47,10 +69,12 @@ class Templater
         new(*args).run
       end
       
-      def new
+      def new(*args, &block)
         obj = Object.new.extend(self)
         class << obj; extend ClassMethods end
         obj.instance_eval "def class; #{self} end"
+        obj.args = args 
+        obj.init(*args, &block)
         obj
       end
     end
@@ -66,19 +90,17 @@ class Templater
     def template_paths; self.class.template_paths end
     def path; self.class.path end
     
-    def sections(*sections)
-      if sections.empty? 
+    def sections(*new_sections)
+      if new_sections.empty? 
         @sections 
       else
-        @sections = [sections].flatten
+        @sections = [new_sections].flatten
       end
     end
     
-    def init(*args) self.args = args end
+    def init(*args) end
 
     def run(*args)
-      self.args = args
-      init(*args)
       sections.map do |section|
         run_section(section)
       end.join
@@ -87,12 +109,13 @@ class Templater
       me.set_backtrace(e.backtrace)
       raise me
     end
+    alias to_s run
     
     def run_section(section)
       #puts "#{self.inspect} Running section #{section} #{self.class.ancestors.inspect}"
       case section
       when String
-        section
+        render(section)
       when Symbol
         if respond_to? section
           send(section)
@@ -102,7 +125,7 @@ class Templater
       when Template
         section.run(*args)
       when Module
-        section.new.run(*args)
+        section.new(*args).run
       else
         raise ArgumentError, "invalid section #{section.inspect}"
       end
