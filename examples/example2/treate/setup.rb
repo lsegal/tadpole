@@ -1,1 +1,3 @@
-sections 'main.haml', ['header.erb', 'what_is.erb', 'copyright.erb']
+def init
+  sections 'main', ['header', 'what_is', 'copyright']
+end

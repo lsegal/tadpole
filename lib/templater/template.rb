@@ -77,7 +77,7 @@ module Templater
       sects.each_with_index do |section, i|
         next if section.is_a?(Array)
         if sects[i+1].is_a?(Array)
-          out += render(section) { render(sects[i+1], &block) }
+          out += render(section) { run_sections(sects[i+1], &block) }
         else
           out += render(section, &block)
         end
@@ -89,7 +89,7 @@ module Templater
       #puts "#{self.inspect} Running section #{section} #{self.class.ancestors.inspect}"
       case section
       when String
-        find_section_provider(section).render
+        find_section_provider(section).render(&block)
       when Symbol
         if respond_to? section
           send(section, &block)
