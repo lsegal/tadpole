@@ -71,22 +71,29 @@ module Templater
     end
     alias to_s run
     
-    def run_sections(sects, &block)
+    def run_sections(sects, break_first = false, &block)
       out = ''
       sects = sects.first if sects.first.is_a?(Array)
       sects.each_with_index do |section, i|
-        next if section.is_a?(Array)
+        (break_first ? break : next) if section.is_a?(Array)
+        
         if sects[i+1].is_a?(Array)
-          out += render(section) { run_sections(sects[i+1], &block) }
+          list = sects[i+1].dup
+          out += render(section) do
+            data = run_sections(list, true, &block) 
+            list.shift; list.shift if list.first.is_a?(Array)
+            data
+          end
         else
           out += render(section, &block)
         end
+        
+        break if break_first
       end
       out
     end
     
     def render(section, &block)
-      #puts "#{self.inspect} Running section #{section} #{self.class.ancestors.inspect}"
       case section
       when String
         find_section_provider(section).render(&block)
