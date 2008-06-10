@@ -36,7 +36,7 @@ module Templater
           mod.send :include, submod
           if list == path
             mod.template_paths = submod.template_paths
-            mod.sections = submod.sections
+            #mod.sections = submod.sections
           end
         end
         list
@@ -49,11 +49,11 @@ module Templater
     
     def create_template_mod(full_path)
       name = template_mod_name(full_path)
-      return const_get(name) if Templater.cache rescue NameError
+      return const_get(name) if Templater.caching rescue NameError
       mod = Module.new
       mod.send(:include, TemplatePath)
       mod.template_paths.push(full_path)
-      Templater.cache ? const_set(name, mod) : mod
+      Templater.caching ? const_set(name, mod) : mod
     end
     
     def find_matching_template_paths(*path)

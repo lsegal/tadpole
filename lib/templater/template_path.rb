@@ -12,16 +12,6 @@ module Templater
           include(*templates)
         end
       end
-
-      def sections(*new_sections)
-        if new_sections.empty? 
-          @sections 
-        elsif new_sections.size == 1 && new_sections.first.is_a?(Array)
-          @sections = new_sections.first
-        else
-          @sections = new_sections
-        end
-      end
     end
 
     def self.included(klass)

@@ -12,7 +12,7 @@ module Templater
         class << obj; extend ClassMethods end
         obj.instance_eval "def class; #{self} end"
         obj.options = opts
-        obj.sections(*sections)
+        #obj.sections(*sections)
         obj.init(&block)
         obj
       end
@@ -46,6 +46,7 @@ module Templater
     def path; self.class.path end
 
     def sections(*new_sections)
+      new_sections.compact!
       if new_sections.empty? 
         @sections 
       elsif new_sections.size == 1 && new_sections.first.is_a?(Array)
@@ -60,8 +61,9 @@ module Templater
     def run(opts = {}, &block)
       old_opts = options.dup
       self.options.update(opts)
-      run_sections(sections, &block)
+      out = run_sections(sections, &block)
       options.replace(old_opts)
+      out
     rescue => e
       me = NoMethodError.new("In #{self.inspect}: #{e.message}")
       me.set_backtrace(e.backtrace)
@@ -84,7 +86,7 @@ module Templater
     end
     
     def render(section, &block)
-      puts "#{self.inspect} Running section #{section} #{self.class.ancestors.inspect}"
+      #puts "#{self.inspect} Running section #{section} #{self.class.ancestors.inspect}"
       case section
       when String
         find_section_provider(section).render

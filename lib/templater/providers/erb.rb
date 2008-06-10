@@ -6,7 +6,7 @@ module Templater
 
         require 'erb'
         erb = ERB.new(content, nil, '<>')
-        instance_eval "def render(locals = nil); #{@erb.src} end"
+        instance_eval "def render(locals = nil); #{erb.src} end"
       end
       
       def method_missing(meth, *args, &block)

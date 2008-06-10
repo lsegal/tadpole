@@ -1,2 +1,6 @@
 inherits 'default/html/body'
-sections[1,0] = 'important.html'
+
+def init
+  super
+  sections[1,0] = 'important.html'
+end

@@ -1,4 +1,6 @@
-sections 'info.erb', :copyright
+def init
+  sections 'info', :copyright
+end
 
 def copyright; "<div id='copyright'>Copyright 2008 Loren Segal</div>" end
 

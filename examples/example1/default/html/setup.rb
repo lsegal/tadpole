@@ -1,1 +1,3 @@
-sections 'main'
+def init
+  sections 'main' 
+end
