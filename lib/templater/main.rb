@@ -1,13 +1,25 @@
 class Array
-  def insert_before(a, b) self[index(a), 0] = b end
-  def insert_after(a, b) self[index(a)+1, 0] = b end
+  def place(a) Insertion.new(self, a) end
+end
+
+class Insertion
+  def initialize(list, value) @list, @value = list, value end
+  def before(val) insertion(val, 0) end
+  def after(val) insertion(val, 1) end
+  private
+  def insertion(val, rel) 
+    if index = @list.index(val)
+      @list[index+rel,0] = @value 
+    end
+    @list
+  end
 end
 
 module Templater
   class << self
     attr_accessor :caching
     
-    def cache; @caching ||= true end
+    def caching; @caching ||= true end
     
     def template_paths
       @@template_paths ||= []
@@ -17,52 +29,62 @@ module Templater
       template_paths.push(path)
     end
     
-    def create_template(*path)
-      if path.size == 1 && path.first.is_a?(String)
-        path = path.first.split('/')
-      end
-      name = template_class_name(*path)
-      return const_get(name) if Templater.cache rescue NameError
+    def template(*path)
+      path = absolutize_path(*path)
+      name = template_mod_name(path)
+      return const_get(name) if caching rescue NameError
       
-      exists = find_matching_template_paths(*path)
+      exists = find_matching_template_paths(path)
       if exists.empty?
-        raise ArgumentError, "no such template `#{path.join(File::SEPARATOR)}'"
+        raise ArgumentError, "no such template `#{path}'"
       end
       
+      mod = create_template(path)
+      caching ? const_set(name, mod) : mod
+    end
+    
+    private
+
+    def absolutize_path(*path)
+      path.map! {|s| s.to_s }
+      File.expand_path(File.join(path))[(Dir.pwd.length+1)..-1]
+    end
+    
+    def create_template(path)
       mod = Module.new
       mod.send(:include, Template)
       mod.path = path
+      mod.template_paths = []
       
-      path = path.flatten
-      path.inject([]) do |list, el|
+      path.split(File::SEPARATOR).inject([]) do |list, el|
         list << el
-        find_matching_template_paths(*list).each do |subpath|
+        total_list = File.join(list)
+        find_matching_template_paths(total_list).each do |subpath|
           submod = load_setup_rb(subpath)
           mod.send :include, submod
-          if list == path
-            mod.template_paths = submod.template_paths
+          #if total_list == path
+            mod.template_paths.push *submod.template_paths
             #mod.sections = submod.sections
-          end
+          #end
         end
         list
       end
       
-      Templater.caching ? const_set(name, mod) : mod
+      mod.template_paths.uniq!
+      mod
     end
-    
-    private
     
     def create_template_mod(full_path)
       name = template_mod_name(full_path)
-      return const_get(name) if Templater.caching rescue NameError
+      return const_get(name) if caching rescue NameError
       mod = Module.new
       mod.send(:include, TemplatePath)
+      mod.path = full_path
       mod.template_paths.push(full_path)
-      Templater.caching ? const_set(name, mod) : mod
+      caching ? const_set(name, mod) : mod
     end
     
-    def find_matching_template_paths(*path)
-      path = path.flatten.join(File::SEPARATOR)
+    def find_matching_template_paths(path)
       template_paths.map do |template_path|
         full_path = File.join(template_path, path)
         File.directory?(full_path) ? full_path : nil
@@ -80,13 +102,9 @@ module Templater
     end
 
     def template_mod_name(full_path)
-      'Template_' + full_path.split(/\/+/).map {|p| p =~ /^\.{1,2}$/ ? '' : p }.compact.join('_')
-    end
-    
-    def template_class_name(*path)
-      'Template_' + path.join('_')
+      'Template_' + full_path.gsub(File::SEPARATOR, '_')
     end
   end
 end
 
-def T(*path) Templater.create_template(*path) end
+def Templater(*path) Templater.template(*path) end

@@ -114,7 +114,7 @@ module Templater
         if respond_to? section
           send(section, &block)
         else
-          Templater.create_template(*(path + [section])).new(options).run(&block)
+          Templater(path, section).new(options).run(&block)
         end
       when Template
         section.run(&block)
@@ -125,7 +125,7 @@ module Templater
       end
     end
 
-    def inspect; "#<Template:0x#{object_id.to_s(16)} path='#{self.path.join('/')}' sections=#{sections.inspect}>" end
+    def inspect; "#<Template:0x#{object_id.to_s(16)} path='#{self.path}' sections=#{sections.inspect}>" end
     
     private
     
@@ -139,9 +139,7 @@ module Templater
       else
         SectionProviders.providers.each do |ext, prov|
           filename = "#{section}.#{ext}"
-          if find_template(filename)
-            break provider = prov
-          end
+          break provider = prov if find_template(filename)
         end
       end
       

@@ -2,10 +2,10 @@ require File.join(File.dirname(__FILE__), '..', 'lib', 'templater')
 
 Templater.caching = false
 
-describe 'T' do
+describe 'Templater' do
   it "should be an alias to Templater.create_template" do
-    Templater.should_receive(:create_template).with(:x, :y, :z)
-    T(:x, :y, :z) 
+    Templater.should_receive(:template).with(:x, :y, :z)
+    Templater(:x, :y, :z) 
   end
 end
 
@@ -13,13 +13,13 @@ describe Templater, '.create_template' do
   before { Templater.template_paths.clear }
   
   it "should raise ArgumentError if path does not exist in template_paths" do
-    lambda { T(:x, :y, :z) }.should raise_error(ArgumentError)
+    lambda { Templater(:x, :y, :z) }.should raise_error(ArgumentError)
   end
   
   it "should create the module with the path name" do
     Templater.register_template_path ''
     File.should_receive(:directory?).exactly(3).times.and_return(true)
-    T(:default, :html)
+    Templater(:default, :html)
     Templater.constants.should include("Template_default_html")
     Templater.constants.should include("Template__default_html")
     Templater.constants.should include("Template__default")
@@ -29,7 +29,7 @@ describe Templater, '.create_template' do
     Templater.register_template_path 'a'
     Templater.register_template_path 'b'
     File.should_receive(:directory?).exactly(6).times.and_return(true)
-    T(:new, :template)
+    Templater(:new, :template)
     Templater.constants.should include("Template_new_template")
     Templater.constants.should include("Template_a_new_template")
     Templater.constants.should include("Template_a_new")
@@ -46,14 +46,14 @@ describe Templater, "::Template" do
   it "should act as a class (have a .new, #inspect, etc.)" do
     #File.should_receive(:directory?).and_return(true)
     #Templater.caching = false
-    T(:default, :html).should respond_to(:new)
-    Templater::Template.should === T(:default, :html).new
+    Templater(:default, :html).should respond_to(:new)
+    Templater::Template.should === Templater(:default, :html).new
     #Templater.caching = false
   end
   
   it "should #run with Symbol sections as methods" do
     File.should_receive(:directory?).at_least(1).times.and_return(true)
-    obj = T(:x, :q).new
+    obj = Templater(:x, :q).new
     obj.stub!(:sections).and_return([:a, :b, :c])
     obj.should_receive(:a).and_return('X')
     obj.should_receive(:b).and_return('Y')
@@ -63,10 +63,10 @@ describe Templater, "::Template" do
 
   it "should #run with Symbol sections as templates" do
     File.should_receive(:directory?).at_least(1).times.and_return(true)
-    qr, qs = T(:Q,:R).new, T(:Q, :S).new
-    T(:Q, :R).should_receive(:new).and_return(qr)
-    T(:Q, :S).should_receive(:new).and_return(qs)
-    obj = T(:Q).new
+    qr, qs = Templater(:Q,:R).new, Templater(:Q, :S).new
+    Templater(:Q, :R).should_receive(:new).and_return(qr)
+    Templater(:Q, :S).should_receive(:new).and_return(qs)
+    obj = Templater(:Q).new
     obj.stub!(:sections).and_return([:a, :R, :S])
     obj.should_receive(:a).and_return('X')
     qr.should_receive(:run).and_return('Y')
@@ -78,7 +78,7 @@ describe Templater, "::Template" do
     File.should_receive(:directory?).at_least(1).times.and_return(true)
     obj = mock(:obj)
     obj.stub!(:run)
-    T(:s).should_receive(:new).and_return(obj)
-    T(:s).run
+    Templater(:s).should_receive(:new).and_return(obj)
+    Templater(:s).run
   end
 end
