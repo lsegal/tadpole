@@ -14,6 +14,7 @@ module Templater
         obj.options = opts
         #obj.sections(*sections)
         obj.init(&block)
+        obj.compile_sections if Templater.caching
         obj
       end
     end
@@ -54,6 +55,28 @@ module Templater
       else
         @sections = new_sections
       end
+    end
+    
+    def compile_sections(list = sections)
+      list.map! do |section|
+        case section
+        when Array
+          compile_sections(section)
+        when String
+          find_section_provider(section)
+        when Symbol
+          if respond_to?(section)
+            section
+          else
+            Templater(path, section).new(options)
+          end
+        when Module
+          section.new(options)
+        else
+          section
+        end
+      end
+      list
     end
     
     def init(&block); end
@@ -114,12 +137,15 @@ module Templater
         if respond_to? section
           send(section, &block)
         else
-          Templater(path, section).new(options).run(&block)
+          @providers[section.to_s] ||= Templater(path, section).new(options)
+          @providers[section.to_s].run(&block)
         end
       when Template
         section.run(&block)
       when Module
-        section.new(*args).run(&block)
+        section.new(options).run(&block)
+      when SectionProviders::SectionProvider
+        section.render(&block)
       else
         raise ArgumentError, "invalid section #{section.inspect}"
       end
@@ -133,18 +159,17 @@ module Templater
       @providers ||= {}
       return @providers[section] if @providers[section]
       
-      filename, provider = section, nil
-      if find_template(section)
-        provider = SectionProviders.default_provider
-      else
-        SectionProviders.providers.each do |ext, prov|
-          filename = "#{section}.#{ext}"
-          break provider = prov if find_template(filename)
+      filename, provider = nil, nil
+      template_paths.each do |template_path|
+        SectionProviders.providers.each do |prov|
+          filename = prov.provides?(File.join(template_path, section))
+          break provider = prov if filename
         end
+        break if provider && filename
       end
       
-      raise ArgumentError, "missing section `#{section}'" if !provider
-      @providers[section] = provider.new(template_contents(filename), self)
+      raise ArgumentError, "missing section `#{section}'" if !provider 
+      @providers[section.to_s] = provider.new(filename, self)
     end
     
     def find_template(filename)

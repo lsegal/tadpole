@@ -1,7 +1,9 @@
 module Templater
   module SectionProviders
     class HamlProvider < SectionProvider
-      def initialize(content, owner)
+      EXTENSIONS = ['.haml']
+      
+      def initialize(full_path, owner)
         super
 
         require 'haml'

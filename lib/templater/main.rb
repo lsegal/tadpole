@@ -102,7 +102,7 @@ module Templater
     end
 
     def template_mod_name(full_path)
-      'Template_' + full_path.gsub(File::SEPARATOR, '_')
+      'Template_' + absolutize_path(full_path).gsub(File::SEPARATOR, '_')
     end
   end
 end
