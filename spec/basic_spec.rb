@@ -19,7 +19,7 @@ describe Templater, '.create_template' do
   it "should create the module with the path name" do
     Templater.register_template_path ''
     File.should_receive(:directory?).exactly(3).times.and_return(true)
-    Templater(:default, :html)
+    Templater('default/html')
     Templater.constants.should include("Template_default_html")
     Templater.constants.should include("Template__default_html")
     Templater.constants.should include("Template__default")
