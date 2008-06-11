@@ -1,4 +1,4 @@
-inherits 'treate/markdown'
+inherits '..'
 
 def init
   super

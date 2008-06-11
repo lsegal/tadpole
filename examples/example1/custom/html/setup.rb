@@ -1,3 +1,3 @@
-inherits 'default/html'
+inherits '/default/html'
 
   

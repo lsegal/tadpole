@@ -1,4 +1,4 @@
-inherits 'default/html/body'
+inherits '/default/html/body'
 
 def init
   super

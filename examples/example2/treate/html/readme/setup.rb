@@ -1,5 +1,5 @@
-inherits 'treate/html'
-inherits 'treate/markdown/readme'
+inherits '..'
+inherits '../../markdown/readme'
 
 def init
   super
