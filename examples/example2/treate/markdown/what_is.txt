@@ -1,11 +1,11 @@
-h2. What is This?
+## What is This?
 
 **Tater Tots** (or _Tater_ for short) is an _object-oriented_ templating system that doesn't care about
 what templating engines you like to use. It's kind of like a meta-templating engine, because it really
 only cares about where your templates come from-- not what's in them. All you have to give Tater is
 a list of "sections" that make up your template.
 
-h4. Wait, Did you say object oriented? _For files?_
+#### Wait, Did you say object oriented? _For files?_
 
 Yes. I did. **Tater**'s goal is to bring modularity to your templates by introducing this nifty new concept
 called _"Object-Oriented Programming"_. It allows you to essentially "subclass" a template from another one,
@@ -19,7 +19,7 @@ from one of your other template files, you are creating exactly that kind of cou
 
 How do we solve template coupling? **Sections**.
 
-h4. Sections?
+#### Sections?
 
 You might know these as _partials_. But partials are **ugly**. Partials get lost deep inside your templates
 and never get out. Then, when you need to create a derivative template using everything but that one partial,

@@ -1,3 +1,0 @@
-h1. Welcome to Tater Tots
-
-h2. Templates for Ruby: The Object-Oriented Templating System
