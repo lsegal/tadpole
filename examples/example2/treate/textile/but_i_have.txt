@@ -1,10 +1,10 @@
-## But I Already Use Haml / Erubis / Builder and They're Great.
+h2. But I Already Use Haml / Erubis / Builder and They're Great.
 
 Repeat after me: Tater is _not_ Haml. 
 
-### Tater is _not_ Haml.
-#### Tater is _not_ Haml.
-##### Tater is _not_ Haml.
+* Tater is _not_ Haml.
+* Tater is _not_ Haml.
+* Tater is _not_ Haml.
 
 **Tater** is not a templating engine. It's completely engine-agnostic. In fact, you can use Haml,
 Erubis, Builder, Textile, and any other engine you want and still get the benefit of Tater's 

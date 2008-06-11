@@ -1,2 +1,0 @@
-# Welcome to Tater Tots
-## Templates for Ruby: The Object-Oriented Templating System
