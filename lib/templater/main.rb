@@ -1,3 +1,8 @@
+class Array
+  def insert_before(a, b) self[index(a), 0] = b end
+  def insert_after(a, b) self[index(a)+1, 0] = b end
+end
+
 module Templater
   class << self
     attr_accessor :caching

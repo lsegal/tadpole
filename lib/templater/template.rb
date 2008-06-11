@@ -71,6 +71,7 @@ module Templater
     end
     alias to_s run
     
+    attr_accessor :current_section, :subsections
     def run_sections(sects, break_first = false, &block)
       out = ''
       sects = sects.first if sects.first.is_a?(Array)
@@ -78,19 +79,31 @@ module Templater
         (break_first ? break : next) if section.is_a?(Array)
         
         if sects[i+1].is_a?(Array)
+          self.subsections = sects[i+1].reject {|s| Array === s }
           list = sects[i+1].dup
           out += render(section) do
+            if list.empty?
+              raise LocalJumpError, "Section `#{section}' yielded with no sub-section given."
+            end
+            
             data = run_sections(list, true, &block) 
             list.shift; list.shift if list.first.is_a?(Array)
             data
           end
         else
+          self.current_section = section
           out += render(section, &block)
         end
         
         break if break_first
       end
       out
+    end
+    
+    def all_sections(&block)
+      subsections.each do |s|
+        yield(s) 
+      end
     end
     
     def render(section, &block)

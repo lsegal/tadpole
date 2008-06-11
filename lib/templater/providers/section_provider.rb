@@ -11,13 +11,9 @@ module Templater
         end
       end
 
-      def default_provider(ext = nil)
-        if ext
-          if providers.has_key? ext
-            @default_provider = providers[ext]
-          else
-            raise ArgumentError, "no such provider `#{ext}'"
-          end
+      def default_provider(provider = nil)
+        if provider
+          @default_provider = provider
         else
           @default_provider
         end
@@ -41,7 +37,7 @@ module Templater
     register_provider  :erb     => ERBProvider,
                        :haml    => HamlProvider,
                        :markaby => MarkabyProvider,
-                       :file    => FileProvider
-    default_provider   :file
+                       :txt     => FileProvider
+    default_provider   FileProvider
   end
 end
