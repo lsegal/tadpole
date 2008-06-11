@@ -34,3 +34,4 @@ from nothing but a list of filenames-- then let **Tater** sort it out!
 If you need to visualize this concept, just think about all the templates and partials you used to create any
 page in your last website. List them in order from top to bottom, add in some heirarchy rules, and there you go, 
 you've just made a list of all of your template's sections. It's as simple as that.
+
