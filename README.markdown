@@ -1,5 +1,8 @@
 # Welcome to Tater Tots
 ## Templates for Ruby: The Object-Oriented Templating System
+
+_Created by Loren Segal in 2008, http://www.gnuu.org_
+
 ## What is This?
 
 **Tater Tots** (or _Tater_ for short) is an _object-oriented_ templating system that doesn't care about

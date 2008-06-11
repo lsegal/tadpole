@@ -1,2 +1,5 @@
 # Welcome to Tater Tots
 ## Templates for Ruby: The Object-Oriented Templating System
+
+_Created by Loren Segal in 2008, http://www.gnuu.org_
+
