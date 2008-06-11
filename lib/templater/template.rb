@@ -11,10 +11,7 @@ module Templater
         obj = Object.new.extend(self)
         class << obj; extend ClassMethods end
         obj.instance_eval "def class; #{self} end"
-        obj.options = opts
-        #obj.sections(*sections)
-        obj.init(&block)
-        obj.compile_sections if Templater.caching
+        obj.send(:initialize, opts, &block)
         obj
       end
     end
@@ -58,6 +55,7 @@ module Templater
     end
     
     def compile_sections(list = sections)
+      return unless Array === list
       list.map! do |section|
         case section
         when Array
@@ -79,7 +77,15 @@ module Templater
       list
     end
     
-    def init(&block); end
+    def initialize(opts = {}, &block)
+      @options = opts
+      @providers = {}
+      #self.sections(*sections)
+      init(&block)
+      compile_sections if Templater.caching
+    end
+    
+    def init; end
 
     def run(opts = {}, &block)
       old_opts = options.dup

@@ -46,7 +46,9 @@ module Templater
     private
 
     def absolutize_path(*path)
-      path.map! {|s| s.to_s }
+      path = path.inject([]) do |p, s|
+        s = s.to_s; s[0, 1] == '/' ? p = [s.gsub(/^\/+/, '')] : p << s
+      end.join(File::SEPARATOR)
       File.expand_path(File.join(path))[(Dir.pwd.length+1)..-1]
     end
     
@@ -75,7 +77,7 @@ module Templater
     end
     
     def create_template_mod(full_path, path)
-      name = template_mod_name(full_path)
+      name = 'Local'+template_mod_name(full_path)
       return const_get(name) if caching rescue NameError
       mod = Module.new
       mod.send(:include, TemplatePath)

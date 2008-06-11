@@ -3,13 +3,13 @@ require File.join(File.dirname(__FILE__), '..', 'lib', 'templater')
 Templater.caching = false
 
 describe 'Templater' do
-  it "should be an alias to Templater.create_template" do
+  it "should be an alias to Templater.template" do
     Templater.should_receive(:template).with(:x, :y, :z)
     Templater(:x, :y, :z) 
   end
 end
 
-describe Templater, '.create_template' do
+describe Templater, '.template' do
   before { Templater.template_paths.clear }
   
   it "should raise ArgumentError if path does not exist in template_paths" do
@@ -21,8 +21,8 @@ describe Templater, '.create_template' do
     File.should_receive(:directory?).exactly(3).times.and_return(true)
     Templater('default/html')
     Templater.constants.should include("Template_default_html")
-    Templater.constants.should include("Template__default_html")
-    Templater.constants.should include("Template__default")
+    Templater.constants.should include("LocalTemplate_default_html")
+    Templater.constants.should include("LocalTemplate_default")
   end
   
   it "should override templates from other template paths" do
@@ -31,13 +31,13 @@ describe Templater, '.create_template' do
     File.should_receive(:directory?).exactly(6).times.and_return(true)
     Templater(:new, :template)
     Templater.constants.should include("Template_new_template")
-    Templater.constants.should include("Template_a_new_template")
-    Templater.constants.should include("Template_a_new")
-    Templater.constants.should include("Template_b_new_template")
-    Templater.constants.should include("Template_b_new")
+    Templater.constants.should include("LocalTemplate_a_new_template")
+    Templater.constants.should include("LocalTemplate_a_new")
+    Templater.constants.should include("LocalTemplate_b_new_template")
+    Templater.constants.should include("LocalTemplate_b_new")
     Templater::Template_new_template.ancestors.should == [Templater::Template_new_template, 
-      Templater::Template_b_new_template, Templater::Template_a_new_template, 
-      Templater::Template_b_new, Templater::Template_a_new, Templater::TemplatePath,
+      Templater::LocalTemplate_b_new_template, Templater::LocalTemplate_a_new_template, 
+      Templater::LocalTemplate_b_new, Templater::LocalTemplate_a_new, Templater::TemplatePath,
       Templater::Template]
   end
 end
