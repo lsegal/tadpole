@@ -4,4 +4,14 @@
     %title Tater Tots
     
   %body
-    %div= yield
+    #page
+      #title
+        :markdown
+          #{yield}
+
+      #content= yield
+
+      #copyright
+        :markdown
+          #{yield}
+    

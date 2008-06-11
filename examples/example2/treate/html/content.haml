@@ -1,0 +1,5 @@
+%ol
+  - all_sections do |s|
+    %li{:id => s}
+      :markdown
+        #{yield}
