@@ -51,13 +51,6 @@ describe Templater, "::Template" do
     #Templater.caching = false
   end
   
-  it "should #run with String sections" do
-    File.should_receive(:directory?).at_least(1).times.and_return(true)
-    obj = T(:x, :y).new
-    obj.stub!(:sections).and_return(['a', 'b', 'c'])
-    obj.run.should == 'abc'
-  end
-  
   it "should #run with Symbol sections as methods" do
     File.should_receive(:directory?).at_least(1).times.and_return(true)
     obj = T(:x, :q).new
@@ -83,8 +76,9 @@ describe Templater, "::Template" do
   
   it "should alias .run as new.run" do
     File.should_receive(:directory?).at_least(1).times.and_return(true)
-    T(:s).stub!(:sections).and_return('a')
-    obj = T(:s).new
-    obj.run.should == T(:s).run
+    obj = mock(:obj)
+    obj.stub!(:run)
+    T(:s).should_receive(:new).and_return(obj)
+    T(:s).run
   end
 end
