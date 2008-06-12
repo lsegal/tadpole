@@ -67,13 +67,13 @@
             <p>You can then call these from your <code>header.erb</code> file as simple yields. Each yield renders
             one section in the sub-list:</p>
             
-            <pre><code>&amp;lt;html&amp;gt;&#x000A;  &amp;lt;body&amp;gt;&#x000A;    &amp;lt;h1&amp;gt;Section 1&amp;lt;/h1&amp;gt;&#x000A;    &amp;lt;%= yield %&amp;gt;&#x000A;&#x000A;    &amp;lt;h1&amp;gt;Section 2&amp;lt;/h1&amp;gt;&#x000A;    &amp;lt;%= yield %&amp;gt;&#x000A;&#x000A;    &amp;lt;h1&amp;gt;Copyright&amp;lt;/h1&amp;gt;&#x000A;    &amp;lt;%= yield %&amp;gt;&#x000A;  &amp;lt;/body&amp;gt;&#x000A;&amp;lt;/html&amp;gt;&#x000A;</code></pre>
+            <pre><code>&lt;html&gt;&#x000A;  &lt;body&gt;&#x000A;    &lt;h1&gt;Section 1&lt;/h1&gt;&#x000A;    &lt;%= yield %&gt;&#x000A;&#x000A;    &lt;h1&gt;Section 2&lt;/h1&gt;&#x000A;    &lt;%= yield %&gt;&#x000A;&#x000A;    &lt;h1&gt;Copyright&lt;/h1&gt;&#x000A;    &lt;%= yield %&gt;&#x000A;  &lt;/body&gt;&#x000A;&lt;/html&gt;&#x000A;</code></pre>
             
             <p>Alternatively you can yield all sub-sections with the convenience call <code>all_sections</code> 
-            (in the example, yield param 's' contains the section name which would serve as the li's 
-            id attribute):</p>
+            (in the following <a href="http://haml.hamptoncatlin.com">Haml</a> example, yield param 's' 
+            contains the section name which would serve as the li's id attribute):</p>
             
-            <pre><code>&amp;lt;html&amp;gt;&#x000A;  &amp;lt;body&amp;gt;&#x000A;    &amp;lt;ol&amp;gt;&#x000A;      &amp;lt;% all_sections do |s| %&amp;gt;&#x000A;        &amp;lt;li id=&amp;#x27;&amp;lt;%= s %&amp;gt;&amp;#x27;&amp;gt;&amp;lt;%= yield %&amp;gt;&amp;lt;/li&amp;gt;&#x000A;      &amp;lt;% end %&amp;gt;&#x000A;    &amp;lt;/ol&amp;gt;&#x000A;  &amp;lt;/body&amp;gt;&#x000A;&amp;lt;/html&amp;gt;&#x000A;</code></pre>
+            <pre><code>%html&#x000A;  %body&#x000A;    %ol&#x000A;      - all_sections do |s|&#x000A;        %li{:id =&gt; s}= yield&#x000A;</code></pre>
           </li>
           <li id='what'>
             <h2>What is Tadpole?</h2>

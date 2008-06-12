@@ -79,32 +79,28 @@ template, for example, will usually contain the page body inside the body tag of
 You can then call these from your `header.erb` file as simple yields. Each yield renders
 one section in the sub-list:
 
-    &lt;html&gt;
-      &lt;body&gt;
-        &lt;h1&gt;Section 1&lt;/h1&gt;
-        &lt;%= yield %&gt;
+    <html>
+      <body>
+        <h1>Section 1</h1>
+        <%= yield %>
         
-        &lt;h1&gt;Section 2&lt;/h1&gt;
-        &lt;%= yield %&gt;
+        <h1>Section 2</h1>
+        <%= yield %>
         
-        &lt;h1&gt;Copyright&lt;/h1&gt;
-        &lt;%= yield %&gt;
-      &lt;/body&gt;
-    &lt;/html&gt;
+        <h1>Copyright</h1>
+        <%= yield %>
+      </body>
+    </html>
     
 Alternatively you can yield all sub-sections with the convenience call `all_sections` 
-(in the example, yield param 's' contains the section name which would serve as the li's 
-id attribute):
+(in the following [Haml](http://haml.hamptoncatlin.com) example, yield param 's' 
+contains the section name which would serve as the li's id attribute):
 
-    &lt;html&gt;
-      &lt;body&gt;
-        &lt;ol&gt;
-          &lt;% all_sections do |s| %&gt;
-            &lt;li id=&#x27;&lt;%= s %&gt;&#x27;&gt;&lt;%= yield %&gt;&lt;/li&gt;
-          &lt;% end %&gt;
-        &lt;/ol&gt;
-      &lt;/body&gt;
-    &lt;/html&gt;
+    %html
+      %body
+        %ol
+          - all_sections do |s|
+            %li{:id => s}= yield
     
 What is Tadpole?
 ----------------
