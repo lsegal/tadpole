@@ -1,3 +1,3 @@
 def init
-  sections 'title', 'what_is', 'but_i_have', 'copyright'
+  sections 'title', 'what', 'why', 'scenarios', 'copyright'
 end

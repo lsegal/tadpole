@@ -1,66 +1,123 @@
-Tadpole: A Small but Scalable Templating System for Ruby
-========================================================
+Tadpole: Grow as you go.
+========================
+A Revolutionary New Way To Do Templates For Ruby
+------------------------------------------------
 
 _Created by [Loren Segal](http://www.gnuu.org) in 2008_
 
-## What is This?
+What is Tadpole?
+----------------
 
-**Tadpole** is an _object-oriented_ templating system that doesn't care about
-what templating engines you like to use. It's kind of like a meta-templating engine, because it really
-only cares about where your templates come from-- not what's in them. All you have to give Tadpole is
-a list of "sections" that make up your template.
+**Tadpole** is a small templating engine that attempts to solve a problem that
+no other templating engine does: _extensibility_. When dealing with templates,
+most engines focus on the formatting of the output content while forgetting about
+the important task a developer faces of hooking all these 'views' together. While
+it may seem trivial and worth ignoring, in reality, many templates become plagued
+with complexity and coupling due to the lack of support beyond the mere presentation
+of a single file.
 
-#### Wait, Did you say object oriented? _For files?_
+**Tadpole** deals not with the formatting or translation or markup, but rather
+with the organization of the data as it is outputted. In fact, **Tadpole** is not
+markup at all, nor does it care what markup you use, having out of the box support
+for the obvious template languages in Ruby (ERB, Haml, Markaby, Builder) and the
+ability to add more. **Tadpole is all about information organization, not formatting**.
 
-Yes. I did. **Tadpole**'s goal is to bring modularity to your templates by introducing this nifty new concept
-called _"Object-Oriented Programming"_. It allows you to essentially "subclass" a template from another one,
-inheriting all of the parent template's behaviour. It also allows you to solve another problem common to
-complex templates: _coupling_.
+If you need a good visualization of what **Tadpole** is, think of it as the table of
+contents for your views. Just as it is important to designing each view and partial of
+your template, it is important to decide in what order these views will ultimately be 
+organized. **Tadpole**'s job is to store nothing but your table of contents, and then
+spit it out when you're ready to show it to the world. This technique becomes very 
+powerful in some potentially familiar scenarios.
 
-Now bear with me here, coupling is considered a common problem in software, but you've probably never heard
-someone tell you that your templates files suffer from that problem. Coupling is a necessary dependency from
-one module to another, making it impossible to break the two modules apart. So when you directly call a template
-from one of your other template files, you are creating exactly that kind of coupling.
+Why Tadpole?
+------------
 
-How do we solve template coupling? **Sections**.
+Sufficed to say, you might be wondering what the _big deal_ is. I mean, you're 
+probably getting along just fine without this new concept of tables of contents
+..._or so you think_. The truth is that there are a lot of real-world scenarios
+where the old-style template production simply doesn't cut it. I can say this
+because **Tadpole** was [born from one of them](http://www.github.com/lsegal/yard).
 
-#### Sections?
+I'll be honest, **Tadpole** does not meet every use-case scenario, and it probably
+never will. But if you're writing a _blog app_, _CMS_, customizable _forum software_ or
+anything that will eventually support _customizable templates_ or _theming_, 
+_**Tadpole** was made for you_. Even if you're just dealing with a lot of _template_
+_coupling_ or _internationalization code_, there's a good chance you're looking at the 
+right tool as well.
 
-You might know these as _partials_. But partials are **ugly**. Partials get lost deep inside your templates
-and never get out. Then, when you need to create a derivative template using everything but that one partial,
-you have to make yet another partial which includes the first one, or use some fancy if/then/else logic with
-crazy local variables to hide it from the original template. This gets messy fast, because it's all done 
-from _inside_ the template.
+### Good With Customizable Themes, You Say?
 
-Sections are as simple as a list. In fact, the sections of a template are exactly that-- a list of sub-templates
-that make up the whole. You can compound as many of these lists as you want to create your abstracted template
-from nothing but a list of filenames-- then let **Tadpole** sort it out! 
+Anyone who writes customizable software knows that it requires a lot of de-coupled code.
+While templates are sometimes considered support files rather than actual software, the
+same law holds true for them. Coupled templates are bad for theming because your users
+can't get at the data they want.
 
-If you need to visualize this concept, just think about all the templates and partials you used to create any
-page in your last website. List them in order from top to bottom, add in some heirarchy rules, and there you go, 
-you've just made a list of all of your template's sections. It's as simple as that.
+The standard solution to this problem is to split your templates up into many 'partials'. 
+That way, any user can just go into the right partial and easily edit what they need
+without copying _all_ of the template data, right? __Wrong__. The problem starts when a 
+user wants to start adding or removing partials altogether. In fact, it's actually the
+smallest changes that cause the biggest problems. Everytime they add one line to every
+new partial, they pull in another entire file. Once _you_ update that file, the changes 
+no longer sync to the user. Fixed a typo in your template? Your user may never get the
+memo if he pulled in the file you touched. However, because **Tadpole** never actually
+deals with template _data_, the same setup in **Tadpole** would not be problematic.
+Using **Tadpole**, the user would never even have to touch your templates given a good 
+set of insertion points.
 
-## But I Already Use Haml / Erubis / Builder and They're Great.
+The lesson is, when it comes to customization, there is no partial that is partial enough.
+**Tadpole** inevitably suffers from this problem as well. However, once you start thinking
+in terms of template organization you'll find that it's much harder to decide what part
+of a view deserves a 'partial' than it is to simply split your template up into a series
+of cohesive "_sections_".
 
-Repeat after me: Tadpole is _not_ Haml. 
+Some Theoretically-Real-World-Examples of Tadpole in Action
+-----------------------------------------------------------
 
-### Tadpole is _not_ Haml.
-#### Tadpole is _not_ Haml.
-##### Tadpole is _not_ Haml.
-
-**Tadpole** is not a templating engine. It's completely engine-agnostic. In fact, you can use Haml,
-Erubis, Builder, Textile, and any other engine you want and still get the benefit of Tadpole's 
-_actual_ features. Again, Tadpole doesn't care about what you're actually displaying in your templates,
-just how they're ordered. You can sit a Haml file right next to an ERB file and a Builder file. Tadpole
-doesn't know, or care, that you've done this.
-
-## You Should Also Know
+1.  _Bob_ made a Blogging application called _"Boblog"_ and distributed it under the
+    MIT license over the internet. _Janet_ found this application and decided to 
+    use it to power her upcoming "100 Carrot Recipes" blog. She was mostly happy with
+    the provided themes but wanted to customize the look of the sidebar by adding a
+    "Favourite Recipes" links section and writing a tidbit about herself. Now "Boblog"
+    was a simplistic blog tool and did not support a multitude of plugins, but did use
+    **Tadpole** for theming. Janet read about the way customization was done using "Boblog"
+    and got to work making her changes. Janet went into her custom templates directory and 
+    created her own new template `janet` because she had a bad feeling about directly playing 
+    with the existing template files (_and "Boblog" docs said she didn't need to_). Inside
+    that directory she created her new files `fav_recipes.html` and `about.html` where she 
+    inserted her links to various world renowned Carrot Chefs and a story about her dreams
+    of one day meeting them. Now, she wanted her about section to go at the top of the sidebar,
+    but she wanted her own links section to go beneath the regular links section (already
+    provided by "Boblog"). So, as per the docs, she continued to add a `setup.rb` file which
+    would connect her new files together with the template. In this file, she simply wrote:
+    
+        inherits 'default_theme'
+        
+        def init
+          super
+          sections.unshift 'about'
+          sections.place('fav_recipes').before('links')
+        end
+        
+    She then went into "Boblog"'s administration interface and selected the new `janet` 
+    theme. Voila, her dream of tasty success would finally come true.
+    
+    Three days later, _Bob_ got word of a nasty bug in his software that could potentially
+    lead to harmful attacks if left unfixed. Guess what, that bug was in the sidebar template
+    that Janet was using He quickly patched the bug and released a fix, notifying all of his 
+    users of the changes (Janet was on his mailing list). Because Janet never edited any of 
+    the files belonging to "Boblog", all she had to do was download the patch and restart
+    the application without ever having to remake all of her ever-so-important theming changes to
+    her blog.
+    
+    You Should Also Know
+--------------------
 
 That this `README` was generated by **Tadpole**. Try it:
 
     ruby examples/example2/run.rb markdown/readme
 
-## Copyright & Licensing Information
+Copyright & Licensing Information
+---------------------------------
 
 _Copyright 2008 Loren Segal._
 _All code licensed under the MIT License._

@@ -139,6 +139,8 @@ module Tadpole
       end
     end
     
+    def yieldall; subsections.map { yield }.join end
+    
     def render(section, &block)
       case section
       when String
