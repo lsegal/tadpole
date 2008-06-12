@@ -10,8 +10,9 @@ Quick How-To's
 
 Creating a template is literally as easy as 1-2-3:
 
-1. Create your templates in a directory. The directory name will be the (or part of)
-the name of your template. Example for template `mytemplate`:
+1. Create your templates in a directory. All directories are templates and all templates
+are directories. The directory name will be the (or part of) the name of your template. 
+Example for template `mytemplate`:
 
         templates/
           mytemplate/
@@ -27,6 +28,9 @@ the name of your template. Example for template `mytemplate`:
           sections 'section1', 'section2', 'copyright'
         end
     
+   Your sections can include another template (directory). This will call whatever
+   sections were part of that other template.
+   
    A directory does not _require_ a `section.rb`. If it is not supplied, it will inherit
    the setup file from its parent (including its sections).
     
@@ -64,6 +68,44 @@ And to run this file all we need to do is:
     # Running our template will now add our 'header' file to the output
     Tadpole('mytemplate').run 
 
+### Heirarchical Sections
+
+Sometimes you may need to encapsulate the output of some sections inside another one. An HTML
+template, for example, will usually contain the page body inside the body tag of a more general
+"header" template. To set this up, you use the following `sections` call:
+
+    sections 'header', ['section1', 'section2', 'copyright']
+    
+You can then call these from your `header.erb` file as simple yields. Each yield renders
+one section in the sub-list:
+
+    &lt;html&gt;
+      &lt;body&gt;
+        &lt;h1&gt;Section 1&lt;/h1&gt;
+        &lt;%= yield %&gt;
+        
+        &lt;h1&gt;Section 2&lt;/h1&gt;
+        &lt;%= yield %&gt;
+        
+        &lt;h1&gt;Copyright&lt;/h1&gt;
+        &lt;%= yield %&gt;
+      &lt;/body&gt;
+    &lt;/html&gt;
+    
+Alternatively you can yield all sub-sections with the convenience call `all_sections` 
+(in the example, yield param 's' contains the section name which would serve as the li's 
+id attribute):
+
+    &lt;html&gt;
+      &lt;body&gt;
+        &lt;ol&gt;
+          &lt;% all_sections do |s| %&gt;
+            &lt;li id=&#x27;&lt;%= s %&gt;&#x27;&gt;&lt;%= yield %&gt;&lt;/li&gt;
+          &lt;% end %&gt;
+        &lt;/ol&gt;
+      &lt;/body&gt;
+    &lt;/html&gt;
+    
 What is Tadpole?
 ----------------
 
