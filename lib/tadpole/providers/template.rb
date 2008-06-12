@@ -7,9 +7,9 @@ module Tadpole
       
       def initialize(full_path, owner)
         self.owner = owner
-        owner.template_paths.each do |template_path|
+        Tadpole.template_paths.each do |template_path|
           if full_path.index(template_path) == 0
-            path = full_path[template_path..-1]
+            path = full_path[template_path.length..-1]
             @template = Tadpole(owner.path, path).new(owner.options)
           end
         end

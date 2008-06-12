@@ -19,20 +19,22 @@ module Tadpole
   class << self
     attr_accessor :caching
     
-    def caching; @caching ||= true end
+    def caching; @caching ||= false end
     
     def template_paths
       @@template_paths ||= []
     end
     
     def register_template_path(path)
-      template_paths.push(path)
+      template_paths.unshift(path)
     end
     
     def template(*path)
       path = absolutize_path(*path)
       name = template_mod_name(path)
-      return const_get(name) if caching rescue NameError
+
+      remove_const(name) unless caching rescue NameError
+      return const_get(name) rescue NameError
       
       exists = find_matching_template_paths(path)
       if exists.empty?
@@ -40,7 +42,7 @@ module Tadpole
       end
       
       mod = create_template(path)
-      caching ? const_set(name, mod) : mod
+      const_set(name, mod) 
     end
     
     private
@@ -62,10 +64,10 @@ module Tadpole
         list << el
         total_list = File.join(list)
         find_matching_template_paths(total_list).each do |subpath|
-          submod = load_setup_rb(subpath, total_list)
+          submod = create_template_mod(subpath, total_list)
           mod.send :include, submod
           #if total_list == path
-            mod.template_paths.push *submod.template_paths
+            mod.template_paths.unshift *submod.template_paths
             #mod.sections = submod.sections
           #end
         end
@@ -78,12 +80,17 @@ module Tadpole
     
     def create_template_mod(full_path, path)
       name = 'Local'+template_mod_name(full_path)
-      return const_get(name) if caching rescue NameError
+      
+      remove_const(name) unless caching rescue NameError
+      return const_get(name) rescue NameError 
+
       mod = Module.new
       mod.send(:include, TemplatePath)
       mod.path = path
-      mod.template_paths.push(full_path)
-      caching ? const_set(name, mod) : mod
+      mod.template_paths.unshift(full_path)
+      load_setup_rb(full_path, mod)
+
+      const_set(name, mod) 
     end
     
     def find_matching_template_paths(path)
@@ -93,12 +100,10 @@ module Tadpole
       end.compact
     end
     
-    def load_setup_rb(full_path, path, mod = nil)
-      mod = create_template_mod(full_path, path) unless mod 
-      
+    def load_setup_rb(full_path, mod)
       setup_file = File.join(full_path, 'setup.rb')
       if File.file? setup_file
-        mod.module_eval File.read(setup_file).taint
+        mod.module_eval(File.read(setup_file).taint, __FILE__, __LINE__)
       end
       mod
     end

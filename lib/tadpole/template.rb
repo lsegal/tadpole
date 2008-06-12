@@ -10,7 +10,7 @@ module Tadpole
       def new(opts = {}, &block)
         obj = Object.new.extend(self)
         class << obj; extend ClassMethods end
-        obj.instance_eval "def class; #{self} end"
+        obj.instance_eval("def class; #{self} end", __FILE__, __LINE__)
         obj.send(:initialize, opts, &block)
         obj
       end
@@ -66,7 +66,7 @@ module Tadpole
           if respond_to?(section)
             section
           else
-            Tadpole(path, section).new(options)
+            find_section_provider(section)
           end
         when Module
           section.new(options)
@@ -74,7 +74,6 @@ module Tadpole
           section
         end
       end
-      list
     end
     
     def initialize(opts = {}, &block)
@@ -139,7 +138,7 @@ module Tadpole
       end
     end
     
-    def yieldall; subsections.map { yield }.join end
+    def yieldall; subsections.map {|s| render(s) }.join end
     
     def render(section, &block)
       case section
@@ -149,8 +148,7 @@ module Tadpole
         if respond_to? section
           send(section, &block)
         else
-          @providers[section.to_s] ||= Tadpole(path, section).new(options)
-          @providers[section.to_s].run(&block)
+          find_section_provider(section).render(&block)
         end
       when Template
         section.run(&block)
@@ -171,8 +169,9 @@ module Tadpole
     private
     
     def find_section_provider(section)
+      section = section.to_s
       @providers ||= {}
-      return @providers[section.to_s] if @providers[section.to_s]
+      return @providers[section] if @providers[section]
       
       filename, provider = nil, nil
       template_paths.each do |template_path|
@@ -184,7 +183,7 @@ module Tadpole
       end
       
       raise ArgumentError, "missing section `#{section}'" if !provider 
-      @providers[section.to_s] = provider.new(filename, self)
+      @providers[section] = provider.new(filename, self)
     end
     
     def find_template(filename)
