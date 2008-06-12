@@ -25,3 +25,4 @@ And to run this file all we need to do is:
     
     # Running our template will now add our 'header' file to the output
     Tadpole('mytemplate').run
+    

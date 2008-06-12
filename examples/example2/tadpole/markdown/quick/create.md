@@ -31,3 +31,4 @@ Example for template `mytemplate`:
         require 'tadpole'
         Tadpole.register_template_path 'path/to/templates'
         Tadpole('mytemplate').run
+        
