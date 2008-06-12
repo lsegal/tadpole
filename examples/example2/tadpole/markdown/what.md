@@ -21,5 +21,5 @@ _contents for your views_. Just as it is important to designing each view and pa
 your template, it is important to decide in what order these views will ultimately be 
 organized. **Tadpole**'s job is to store nothing but your table of contents, and then
 spit it out when you're ready to show it to the world. This technique becomes very 
-powerful in some potentially familiar scenarios.
+powerful in some potentially familiar scenarios. (_See the "Real World Scenarios"_)
 
