@@ -3,6 +3,37 @@ Tadpole: Revolutionizing Templates in Ruby
 
 _Created by [Loren Segal](http://www.gnuu.org) in 2008_
 
+Quick How-To's
+--------------
+
+### Create a Template
+
+1. Create your templates in a directory. The directory name will be the (or part of)
+the name of your template. Example for template `mytemplate`:
+
+    templates/
+      mytemplate/
+        setup.rb
+        section1.erb
+        section2.haml
+        copyright.html
+      
+2. Setup the "_table of contents_" of your sections in the `setup.rb`:
+
+    def init
+      super
+      sections 'section1', 'section2', 'copyright'
+    end
+    
+   A directory does not _require_ a `section.rb`. If it is not supplied, it will inherit
+   the setup file from its parent (including its sections).
+    
+3. Register the `templates` path as your root template directory and run the template:
+
+    require 'tadpole'
+    Tadpole.register_template_path 'path/to/templates'
+    Tadpole('mytemplate').run
+    
 What is Tadpole?
 ----------------
 

@@ -12,6 +12,37 @@
       </div>
       <div id='content'>
         <ol>
+          <li id='quick'>
+            <h2>Quick How-To's</h2>
+            
+            <h3>Create a Template</h3>
+            
+            <ol>
+            <li><p>Create your templates in a directory. The directory name will be the (or part of)
+            the name of your template. Example for template <code>mytemplate</code>:</p>
+            
+            <p>templates/
+              mytemplate/
+                setup.rb
+                section1.erb
+                section2.haml
+                copyright.html</p></li>
+            <li><p>Setup the "<em>table of contents</em>" of your sections in the <code>setup.rb</code>:</p>
+            
+            <p>def init
+              super
+              sections 'section1', 'section2', 'copyright'
+            end</p>
+            
+            <p>A directory does not <em>require</em> a <code>section.rb</code>. If it is not supplied, it will inherit
+            the setup file from its parent (including its sections).</p></li>
+            <li><p>Register the <code>templates</code> path as your root template directory and run the template:</p>
+            
+            <p>require 'tadpole'
+            Tadpole.register<em>template</em>path 'path/to/templates'
+            Tadpole('mytemplate').run</p></li>
+            </ol>
+          </li>
           <li id='what'>
             <h2>What is Tadpole?</h2>
             
