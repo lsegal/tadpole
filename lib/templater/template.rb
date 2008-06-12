@@ -56,7 +56,7 @@ module Templater
     
     def compile_sections(list = sections)
       return unless Array === list
-      list.map! do |section|
+      list.map do |section|
         case section
         when Array
           compile_sections(section)
@@ -81,8 +81,12 @@ module Templater
       @options = opts
       @providers = {}
       #self.sections(*sections)
+      
       init(&block)
-      compile_sections if Templater.caching
+
+      if Templater.caching
+        @compiled_sections = compile_sections(sections) 
+      end
     end
     
     def init; end
@@ -90,7 +94,7 @@ module Templater
     def run(opts = {}, &block)
       old_opts = options.dup
       self.options.update(opts)
-      out = run_sections(sections, &block)
+      out = run_sections(@compiled_sections || sections, &block)
       options.replace(old_opts)
       out
     rescue => e
@@ -157,7 +161,10 @@ module Templater
       end
     end
 
-    def inspect; "#<Template:0x#{object_id.to_s(16)} path='#{self.path}' sections=#{sections.inspect}>" end
+    def inspect
+      "#<Template:0x%s path='%s' sections=%s%s>" % [object_id.to_s(16), 
+        path, sections.inspect, @compiled_sections ? ' (compiled)' : ''] 
+    end
     
     private
     
