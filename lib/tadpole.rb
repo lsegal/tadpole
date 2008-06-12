@@ -1,8 +1,8 @@
 require 'rubygems'
 
-module Templater
+module Tadpole
   Version = '0.1.0'
-  Root = File.dirname(__FILE__) + '/templater'
+  Root = File.dirname(__FILE__) + '/tadpole'
   
   module SectionProviders
     autoload :ERBProvider,      Root + '/providers/erb'
@@ -17,10 +17,10 @@ module Templater
 end
 
 ['main', 'providers/section_provider'].each do |path|
-  require File.join(Templater::Root, path)
+  require File.join(Tadpole::Root, path)
 end
 
-module Templater::SectionProviders
+module Tadpole::SectionProviders
   register_provider TemplateProvider, ERBProvider, HamlProvider, FileProvider
 end
 

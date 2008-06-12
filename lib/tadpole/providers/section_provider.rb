@@ -1,4 +1,4 @@
-module Templater
+module Tadpole
   module SectionProviders
     class << self
       def providers

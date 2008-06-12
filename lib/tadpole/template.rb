@@ -1,4 +1,4 @@
-module Templater
+module Tadpole
   module Template
     module ClassMethods
       attr_accessor :path, :template_paths, :sections
@@ -66,7 +66,7 @@ module Templater
           if respond_to?(section)
             section
           else
-            Templater(path, section).new(options)
+            Tadpole(path, section).new(options)
           end
         when Module
           section.new(options)
@@ -84,7 +84,7 @@ module Templater
       
       init(&block)
 
-      if Templater.caching
+      if Tadpole.caching
         @compiled_sections = compile_sections(sections) 
       end
     end
@@ -147,7 +147,7 @@ module Templater
         if respond_to? section
           send(section, &block)
         else
-          @providers[section.to_s] ||= Templater(path, section).new(options)
+          @providers[section.to_s] ||= Tadpole(path, section).new(options)
           @providers[section.to_s].run(&block)
         end
       when Template

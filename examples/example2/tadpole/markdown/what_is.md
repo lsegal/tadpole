@@ -1,13 +1,13 @@
 ## What is This?
 
-**Tater Tots** (or _Tater_ for short) is an _object-oriented_ templating system that doesn't care about
+**Tadpole** is an _object-oriented_ templating system that doesn't care about
 what templating engines you like to use. It's kind of like a meta-templating engine, because it really
-only cares about where your templates come from-- not what's in them. All you have to give Tater is
+only cares about where your templates come from-- not what's in them. All you have to give Tadpole is
 a list of "sections" that make up your template.
 
 #### Wait, Did you say object oriented? _For files?_
 
-Yes. I did. **Tater**'s goal is to bring modularity to your templates by introducing this nifty new concept
+Yes. I did. **Tadpole**'s goal is to bring modularity to your templates by introducing this nifty new concept
 called _"Object-Oriented Programming"_. It allows you to essentially "subclass" a template from another one,
 inheriting all of the parent template's behaviour. It also allows you to solve another problem common to
 complex templates: _coupling_.
@@ -29,7 +29,7 @@ from _inside_ the template.
 
 Sections are as simple as a list. In fact, the sections of a template are exactly that-- a list of sub-templates
 that make up the whole. You can compound as many of these lists as you want to create your abstracted template
-from nothing but a list of filenames-- then let **Tater** sort it out! 
+from nothing but a list of filenames-- then let **Tadpole** sort it out! 
 
 If you need to visualize this concept, just think about all the templates and partials you used to create any
 page in your last website. List them in order from top to bottom, add in some heirarchy rules, and there you go, 

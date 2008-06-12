@@ -1,4 +1,4 @@
-module Templater
+module Tadpole
   module TemplatePath
     module ClassMethods
       attr_accessor :path
@@ -7,7 +7,7 @@ module Templater
       def inherits(*templates)
         templates.each do |template|
           p = template.to_s[0,1] == '/' ? [template.to_s[1..-1]] : [path, template]
-          mod = Templater.template(*p)
+          mod = Tadpole.template(*p)
           include mod
           template_paths.push(*mod.template_paths)
         end

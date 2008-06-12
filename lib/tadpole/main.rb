@@ -15,7 +15,7 @@ class Insertion
   end
 end
 
-module Templater
+module Tadpole
   class << self
     attr_accessor :caching
     
@@ -109,4 +109,4 @@ module Templater
   end
 end
 
-def Templater(*path) Templater.template(*path) end
+def Tadpole(*path) Tadpole.template(*path) end
