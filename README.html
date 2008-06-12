@@ -36,10 +36,8 @@
             the setup file from its parent (including its sections).</p></li>
             <li><p>Register the <code>templates</code> path as your root template directory and run the template:</p>
             
-            <pre><code>require 'tadpole'&#x000A;Tadpole.register_template_path 'path/to/templates'&#x000A;Tadpole('mytemplate').run&#x000A;</code></pre></li>
+            <pre><code>require 'tadpole'&#x000A;Tadpole.register_template_path 'path/to/templates'&#x000A;Tadpole('mytemplate').run### Override a Template&#x000A;</code></pre></li>
             </ol>
-            
-            <h3>Override a Template</h3>
             
             <p>You can override templates by simply registering another template_path and creating
             a template of the same name in the new path. Using the <code>mytemplate</code> example from above
@@ -54,9 +52,7 @@
             
             <p>And to run this file all we need to do is:</p>
             
-            <pre><code>require 'tadpole'&#x000A;Tadpole.register_template_path 'path/to/templates'         # Register base template path&#x000A;Tadpole.register_template_path 'path/to/custom_templates'  # Register overridden template path&#x000A;&#x000A;# Running our template will now add our 'header' file to the output&#x000A;Tadpole('mytemplate').run&#x000A;</code></pre>
-            
-            <h3>Heirarchical Sections</h3>
+            <pre><code>require 'tadpole'&#x000A;Tadpole.register_template_path 'path/to/templates'         # Register base template path&#x000A;Tadpole.register_template_path 'path/to/custom_templates'  # Register overridden template path&#x000A;&#x000A;# Running our template will now add our 'header' file to the output&#x000A;Tadpole('mytemplate').run### Heirarchical Sections&#x000A;</code></pre>
             
             <p>Sometimes you may need to encapsulate the output of some sections inside another one. An HTML
             template, for example, will usually contain the page body inside the body tag of a more general

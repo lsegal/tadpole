@@ -38,9 +38,7 @@ Example for template `mytemplate`:
 
         require 'tadpole'
         Tadpole.register_template_path 'path/to/templates'
-        Tadpole('mytemplate').run
-    
-### Override a Template
+        Tadpole('mytemplate').run### Override a Template
 
 You can override templates by simply registering another template_path and creating
 a template of the same name in the new path. Using the `mytemplate` example from above
@@ -66,9 +64,7 @@ And to run this file all we need to do is:
     Tadpole.register_template_path 'path/to/custom_templates'  # Register overridden template path
     
     # Running our template will now add our 'header' file to the output
-    Tadpole('mytemplate').run 
-
-### Heirarchical Sections
+    Tadpole('mytemplate').run### Heirarchical Sections
 
 Sometimes you may need to encapsulate the output of some sections inside another one. An HTML
 template, for example, will usually contain the page body inside the body tag of a more general
@@ -101,6 +97,7 @@ contains the section name which would serve as the li's id attribute):
         %ol
           - all_sections do |s|
             %li{:id => s}= yield
+    
     
 What is Tadpole?
 ----------------
