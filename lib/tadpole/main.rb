@@ -19,7 +19,7 @@ module Tadpole
   class << self
     attr_accessor :caching
     
-    def caching; @caching ||= false end
+    def caching; @caching ||= true end
     
     def template_paths
       @@template_paths ||= []
