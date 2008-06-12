@@ -170,7 +170,7 @@ module Templater
     
     def find_section_provider(section)
       @providers ||= {}
-      return @providers[section] if @providers[section]
+      return @providers[section.to_s] if @providers[section.to_s]
       
       filename, provider = nil, nil
       template_paths.each do |template_path|
