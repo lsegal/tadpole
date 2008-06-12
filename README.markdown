@@ -8,32 +8,62 @@ Quick How-To's
 
 ### Create a Template
 
+Creating a template is literally as easy as 1-2-3:
+
 1. Create your templates in a directory. The directory name will be the (or part of)
 the name of your template. Example for template `mytemplate`:
 
-    templates/
-      mytemplate/
-        setup.rb
-        section1.erb
-        section2.haml
-        copyright.html
+        templates/
+          mytemplate/
+            setup.rb
+            section1.erb
+            section2.haml
+            copyright.html
       
 2. Setup the "_table of contents_" of your sections in the `setup.rb`:
 
-    def init
-      super
-      sections 'section1', 'section2', 'copyright'
-    end
+        def init
+          super
+          sections 'section1', 'section2', 'copyright'
+        end
     
    A directory does not _require_ a `section.rb`. If it is not supplied, it will inherit
    the setup file from its parent (including its sections).
     
 3. Register the `templates` path as your root template directory and run the template:
 
-    require 'tadpole'
-    Tadpole.register_template_path 'path/to/templates'
-    Tadpole('mytemplate').run
+        require 'tadpole'
+        Tadpole.register_template_path 'path/to/templates'
+        Tadpole('mytemplate').run
     
+### Override a Template
+
+You can override templates by simply registering another template_path and creating
+a template of the same name in the new path. Using the `mytemplate` example from above
+we can now make a directory:
+
+    custom_templates/
+      mytemplate/
+        setup.rb
+        header.erb
+
+This template will _inherit_ from the template above. Our `setup.rb` will therefore
+contain:
+
+    def init
+      super
+      sections.unshift 'header'
+    end
+
+And to run this file all we need to do is:
+
+    require 'tadpole'
+    Tadpole.register_template_path 'path/to/templates'         # Register base template path
+    Tadpole.register_template_path 'path/to/custom_templates'  # Register overridden template path
+    
+    # Running our template will now add our 'header' file to the output
+    Tadpole('mytemplate').run 
+
 What is Tadpole?
 ----------------
 
