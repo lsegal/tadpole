@@ -35,7 +35,7 @@
             your template, it is important to decide in what order these views will ultimately be 
             organized. <strong>Tadpole</strong>'s job is to store nothing but your table of contents, and then
             spit it out when you're ready to show it to the world. This technique becomes very 
-            powerful in some potentially familiar scenarios. (<em>See the "Real World Scenarios"</em>)</p>
+            powerful in some potentially familiar scenarios. (<em>See the "Real World Examples"</em>)</p>
           </li>
           <li id='why'>
             <h2>Why Tadpole?</h2>
@@ -78,8 +78,8 @@
             of a view deserves a 'partial' than it is to simply split your template up into a series
             of cohesive "<em>sections</em>".</p>
           </li>
-          <li id='scenarios'>
-            <h2>Some Theoretically-Real-World-Examples of Tadpole in Action</h2>
+          <li id='examples'>
+            <h2>Some <em>Theoretically</em>-Real-World Examples of Tadpole in Action</h2>
             
             <ol>
             <li><p><em>Bob</em> made a Blogging application called <em>"Boblog"</em> and distributed it under the
@@ -104,13 +104,39 @@
             <p>She then went into "Boblog"'s administration interface and selected the new <code>janet</code> 
             theme. Voila, her dream of tasty success would finally come true.</p>
             
-            <p>Three days later, <em>Bob</em> got word of a nasty bug in his software that could potentially
-            lead to harmful attacks if left unfixed. Guess what, that bug was in the sidebar template
-            that Janet was using He quickly patched the bug and released a fix, notifying all of his 
-            users of the changes (Janet was on his mailing list). Because Janet never edited any of 
-            the files belonging to "Boblog", all she had to do was download the patch and restart
-            the application without ever having to remake all of her ever-so-important theming changes to
-            her blog.</p></li>
+            <p>Three days later, <em>Bob</em> got word from an anonymous tipster of a nasty bug in his software 
+            that could potentially lead to harmful attacks if left unfixed. Guess what, that bug was 
+            in the sidebar template that Janet was using! He quickly patched the bug and released a 
+            fix, notifying all of his users of the changes (Janet was on his mailing list). Because 
+            Janet never edited any of the files belonging to "Boblog", all she had to do was download 
+            the patch and restart the application without ever having to remake all of her ever-so-
+            important theming changes to her blog.</p></li>
+            <li><p>Midget Inc. is working on a colourful new site redesign for their mobile widget business.
+            They sell mobile widgets to customers all across the globe and have very strict legal 
+            procedures they need to follow when advertising their mobile widgets. In one specific
+            region, they are required by law to show a disclaimer above any advertising images they
+            display. Rather than place region specific logic inside a partial view, they decide to
+            use <strong>Tadpole</strong> to handle their templating system. They decide to use a folder structure
+            of the following to display their advertising page:</p>
+            
+            <pre><code>advertising/&#x000A;  setup.rb&#x000A;  content.erb&#x000A;  images.erb&#x000A;  fr/&#x000A;    setup.rb&#x000A;    disclaimer.erb&#x000A;</code></pre>
+            
+            <p><code>advertising/setup.rb</code> contains the following:</p>
+            
+            <pre><code>def init; super; sections 'content', 'images' end&#x000A;</code></pre>
+            
+            <p>The <code>fr/</code> subdirectory contains the specific content they need for the law-requiring region
+            and the logic to render this template only in that region is controlled by the controller. 
+            Because the <code>fr/</code> template automatically inherits its sections from its parent, all they need 
+            to do to set up this new logic is put the following in the <code>fr/setup.rb</code>:</p>
+            
+            <pre><code>def init&#x000A;  super&#x000A;  sections.place('disclaimer').before('images')&#x000A;end&#x000A;</code></pre>
+            
+            <p>And the templates can be rendered with:</p>
+            
+            <pre><code>Tadpole('advertising').run&#x000A;Tadpole('advertising/fr').run&#x000A;</code></pre>
+            
+            <p>Respectively.</p></li>
             </ol>
           </li>
           <li id='readme_notice'>
