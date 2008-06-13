@@ -3,6 +3,7 @@ require 'ostruct'
 class OpenHashStruct < OpenStruct
   def [](key)  send(key.to_s) end
   def []=(k,v) send(key.to_s+'=', v) end
+  def to_hash; @table.dup end
 end
 
 module Tadpole
@@ -31,7 +32,14 @@ module Tadpole
     attr_accessor :current_section, :subsections
     
     def options; @options ||= OpenHashStruct.new end
-    def options=(hash) @options = OpenHashStruct.new(hash) end
+    
+    def options=(hash) 
+      if hash.is_a?(OpenStruct)
+        @options = hash
+      else
+        @options = OpenHashStruct.new(hash) 
+      end
+    end
     
     def method_missing(meth, *args, &block)
       if options.respond_to?(meth)
@@ -92,10 +100,10 @@ module Tadpole
     def init; end
 
     def run(opts = {}, &block)
-      old_opts = options.dup
-      self.options.update(opts)
+      old_opts = options
+      self.options = options.to_hash.update(opts)
       out = run_sections(@compiled_sections || sections, &block)
-      options.replace(old_opts)
+      self.options = old_opts
       out
     rescue => e
       me = NoMethodError.new("In #{self.inspect}: #{e.message}")
