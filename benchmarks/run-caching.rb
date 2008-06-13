@@ -3,9 +3,9 @@ require File.dirname(__FILE__) + '/../lib/tadpole'
 
 Tadpole.register_template_path File.dirname(__FILE__) + '/../examples/example1'
 
-TESTS = 10_000
+TESTS = 1
 
-Benchmark.bmbm do |b|
+Benchmark.bm do |b|
   b.report("no-cache") do 
     Tadpole.caching = false
     t = Tadpole('custom/html').new
