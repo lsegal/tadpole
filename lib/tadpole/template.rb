@@ -63,9 +63,7 @@ module Tadpole
         case section
         when Array
           compile_sections(section)
-        when String
-          find_section_provider(section)
-        when Symbol
+        when String, Symbol
           if respond_to?(section)
             section
           else
@@ -148,9 +146,7 @@ module Tadpole
     
     def render(section, &block)
       case section
-      when String
-        find_section_provider(section).render(&block)
-      when Symbol
+      when String, Symbol
         if respond_to? section
           send(section, &block)
         else
