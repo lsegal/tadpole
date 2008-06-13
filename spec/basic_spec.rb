@@ -38,7 +38,7 @@ describe Tadpole, '.template' do
     Tadpole::Template_new_template.ancestors.should == [Tadpole::Template_new_template, 
       Tadpole::LocalTemplate_b_new_template, Tadpole::LocalTemplate_a_new_template, 
       Tadpole::LocalTemplate_b_new, Tadpole::LocalTemplate_a_new, Tadpole::TemplatePath,
-      Tadpole::Template]
+      Tadpole::Template, Tadpole::Filters::InstanceMethods]
   end
 end
 

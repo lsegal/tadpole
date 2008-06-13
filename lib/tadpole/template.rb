@@ -22,6 +22,8 @@ module Tadpole
         obj.send(:initialize, opts, &block)
         obj
       end
+      
+      include Filters::ClassMethods
     end
     
     def self.included(klass)
@@ -86,7 +88,7 @@ module Tadpole
     end
     
     def initialize(opts = {}, &block)
-      @options = opts
+      self.options = opts
       @providers = {}
       #self.sections(*sections)
       
@@ -100,6 +102,8 @@ module Tadpole
     def init; end
 
     def run(opts = {}, &block)
+      return if run_before_run.is_a?(FalseClass)
+      
       old_opts = options
       self.options = options.to_hash.update(opts)
       out = run_sections(@compiled_sections || sections, &block)
@@ -118,7 +122,9 @@ module Tadpole
       sects.each_with_index do |section, i|
         (break_first ? break : next) if section.is_a?(Array)
         
-        self.current_section = section
+        self.current_section = section_name(section)
+        
+        next if run_before_sections.is_a?(FalseClass)
 
         if sects[i+1].is_a?(Array)
           out += run_subsections(section, sects[i+1], &block)
@@ -178,7 +184,20 @@ module Tadpole
         path, sections.inspect, @compiled_sections ? ' (compiled)' : ''] 
     end
     
+    protected
+    
+    include Filters::InstanceMethods
+    
     private
+    
+    def section_name(section)
+      case section
+      when SectionProviders::SectionProvider
+        @providers.index(section.to_s)
+      else
+        section.respond_to?(:path) ? section.path : section
+      end
+    end
     
     def find_section_provider(section)
       section = section.to_s
