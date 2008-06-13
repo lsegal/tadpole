@@ -1,3 +1,10 @@
+require 'ostruct'
+
+class OpenHashStruct < OpenStruct
+  def [](key)  send(key.to_s) end
+  def []=(k,v) send(key.to_s+'=', v) end
+end
+
 module Tadpole
   module Template
     module ClassMethods
@@ -21,17 +28,13 @@ module Tadpole
     end
     
     attr_accessor :options
+    attr_accessor :current_section, :subsections
     
-    def options; @options ||= {} end
-    
-    def options=(hash)
-      hash.each do |k, v|
-        options[k.to_sym] = v
-      end
-    end
+    def options; @options ||= OpenHashStruct.new end
+    def options=(hash) @options = OpenHashStruct.new(hash) end
     
     def method_missing(meth, *args, &block)
-      if options.has_key?(meth)
+      if options.respond_to?(meth)
         options[meth]
       elsif meth.to_s =~ /=$/ && options.has_key?(meth.to_s.gsub(/=$/, ''))
         options[meth] = *args
@@ -103,7 +106,6 @@ module Tadpole
     end
     alias to_s run
     
-    attr_accessor :current_section, :subsections
     def run_sections(sects, break_first = false, &block)
       out = ''
       sects = sects.first if sects.first.is_a?(Array)
@@ -112,16 +114,7 @@ module Tadpole
         
         if sects[i+1].is_a?(Array)
           self.subsections = sects[i+1].reject {|s| Array === s }
-          list = sects[i+1].dup
-          out += render(section) do
-            if list.empty?
-              raise LocalJumpError, "Section `#{section}' yielded with no sub-section given."
-            end
-            
-            data = run_sections(list, true, &block) 
-            list.shift; list.shift if list.first.is_a?(Array)
-            data
-          end
+          run_subsections(sects[i+1], &block)
         else
           self.current_section = section
           out += render(section, &block)
@@ -130,6 +123,19 @@ module Tadpole
         break if break_first
       end
       out
+    end
+    
+    def run_subsections(subsections, &block)
+      list = subsections.dup
+      out += render(section) do
+        if list.empty?
+          raise LocalJumpError, "Section `#{section}' yielded with no sub-section given."
+        end
+        
+        data = run_sections(list, true, &block) 
+        list.shift; list.shift if list.first.is_a?(Array)
+        data
+      end
     end
     
     def all_sections(&block)
