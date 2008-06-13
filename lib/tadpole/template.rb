@@ -118,11 +118,11 @@ module Tadpole
       sects.each_with_index do |section, i|
         (break_first ? break : next) if section.is_a?(Array)
         
+        self.current_section = section
+
         if sects[i+1].is_a?(Array)
-          self.subsections = sects[i+1].reject {|s| Array === s }
-          run_subsections(sects[i+1], &block)
+          out += run_subsections(section, sects[i+1], &block)
         else
-          self.current_section = section
           out += render(section, &block)
         end
         
@@ -131,9 +131,11 @@ module Tadpole
       out
     end
     
-    def run_subsections(subsections, &block)
+    def run_subsections(section, subsections, &block)
+      self.subsections = subsections.reject {|s| Array === s }
       list = subsections.dup
-      out += render(section) do
+
+      render(section) do
         if list.empty?
           raise LocalJumpError, "Section `#{section}' yielded with no sub-section given."
         end
@@ -152,20 +154,20 @@ module Tadpole
     
     def yieldall; subsections.map {|s| render(s) }.join end
     
-    def render(section, &block)
+    def render(section, locals = {}, &block)
       case section
       when String, Symbol
         if respond_to? section
           send(section, &block)
         else
-          find_section_provider(section).render(&block)
+          find_section_provider(section).render(locals, &block)
         end
       when Template
-        section.run(&block)
+        section.run(locals, &block)
       when Module
-        section.new(options).run(&block)
+        section.new(options).run(locals, &block)
       when SectionProviders::SectionProvider
-        section.render(&block)
+        section.render(locals, &block)
       else
         raise ArgumentError, "invalid section #{section.inspect}"
       end
