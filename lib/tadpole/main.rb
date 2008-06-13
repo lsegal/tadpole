@@ -26,7 +26,7 @@ module Tadpole
     end
     
     def register_template_path(path)
-      template_paths.unshift(path)
+      template_paths.push(path)
     end
     
     def template(*path)
@@ -67,7 +67,7 @@ module Tadpole
           submod = create_template_mod(subpath, total_list)
           mod.send :include, submod
           #if total_list == path
-            mod.template_paths.unshift *submod.template_paths
+            mod.template_paths.unshift(*submod.template_paths)
             #mod.sections = submod.sections
           #end
         end
@@ -115,3 +115,4 @@ module Tadpole
 end
 
 def Tadpole(*path) Tadpole.template(*path) end
+alias Template Tadpole

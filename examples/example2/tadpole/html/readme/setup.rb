@@ -1,4 +1,4 @@
-inherits '../../markdown/readme', '..'
+inherits '../../markdown/readme'
 
 def init
   super
