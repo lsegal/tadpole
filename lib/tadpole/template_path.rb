@@ -9,6 +9,8 @@ module Tadpole
           p = template.to_s[0,1] == '/' ? [template.to_s[1..-1]] : [path, template]
           mod = Tadpole.template(*p)
           include mod
+          before_run_filters.push(*mod.before_run_filters)
+          before_section_filters.push(*mod.before_section_filters)
           template_paths.push(*mod.template_paths)
         end
       end
