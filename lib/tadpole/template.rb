@@ -156,6 +156,7 @@ module Tadpole
         else
           data = run_sections(list, true, locals, &block) 
           list.shift; list.shift if list.first.is_a?(Array)
+          list = subsections.dup if list.empty? 
           data
         end
       end
