@@ -10,6 +10,7 @@ module Tadpole
   module Template
     module ClassMethods
       attr_accessor :path, :template_paths, :sections
+      attr_accessor :before_run_filters, :before_section_filters
       
       def run(*args, &block)
         new(*args).run(&block)
@@ -17,13 +18,14 @@ module Tadpole
       
       def new(opts = {}, &block)
         obj = Object.new.extend(self)
-        class << obj; extend ClassMethods end
+        class << obj; 
+          extend ClassMethods 
+          include Filters::InstanceMethods
+        end
         obj.instance_eval("def class; #{self} end", __FILE__, __LINE__)
         obj.send(:initialize, opts, &block)
         obj
       end
-      
-      include Filters::ClassMethods
     end
     
     def self.included(klass)
@@ -184,16 +186,12 @@ module Tadpole
         path, sections.inspect, @compiled_sections ? ' (compiled)' : ''] 
     end
     
-    protected
-    
-    include Filters::InstanceMethods
-    
     private
     
     def section_name(section)
       case section
       when SectionProviders::SectionProvider
-        @providers.index(section.to_s)
+        @providers.index(section) || section
       else
         section.respond_to?(:path) ? section.path : section
       end

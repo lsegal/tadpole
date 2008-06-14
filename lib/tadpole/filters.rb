@@ -36,7 +36,7 @@ module Tadpole
       def run_before_sections
         self.class.before_section_filters.each do |info|
           result, sec, meth = nil, *info
-          if sec.nil? || sec == current_section
+          if sec.nil? || sec.to_s == current_section.to_s
             meth = method(meth) if meth.is_a?(Symbol)
             args = meth.arity == 0 ? [] : [current_section]
             result = meth.call(*args)

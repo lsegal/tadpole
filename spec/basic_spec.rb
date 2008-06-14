@@ -3,6 +3,8 @@ require File.join(File.dirname(__FILE__), '..', 'lib', 'tadpole')
 Tadpole.caching = false
 
 describe 'Tadpole' do
+  before { Tadpole.template_paths.clear }
+
   it "should be an alias to Tadpole.template" do
     Tadpole.should_receive(:template).with(:x, :y, :z)
     Tadpole(:x, :y, :z) 
@@ -38,11 +40,13 @@ describe Tadpole, '.template' do
     Tadpole::Template_new_template.ancestors.should == [Tadpole::Template_new_template, 
       Tadpole::LocalTemplate_b_new_template, Tadpole::LocalTemplate_a_new_template, 
       Tadpole::LocalTemplate_b_new, Tadpole::LocalTemplate_a_new, Tadpole::TemplatePath,
-      Tadpole::Template, Tadpole::Filters::InstanceMethods]
+      Tadpole::Template]
   end
 end
 
 describe Tadpole, "::Template" do
+  before { Tadpole.template_paths.clear; Tadpole.register_template_path '.' }
+
   it "should act as a class (have a .new, #inspect, etc.)" do
     #File.should_receive(:directory?).and_return(true)
     #Tadpole.caching = false

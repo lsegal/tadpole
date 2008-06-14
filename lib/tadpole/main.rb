@@ -59,6 +59,8 @@ module Tadpole
       mod.send(:include, Template)
       mod.path = path
       mod.template_paths = []
+      mod.before_run_filters = []
+      mod.before_section_filters = []
       
       path.split(File::SEPARATOR).inject([]) do |list, el|
         list << el
@@ -68,6 +70,8 @@ module Tadpole
           mod.send :include, submod
           #if total_list == path
             mod.template_paths.unshift(*submod.template_paths)
+            mod.before_run_filters.push(*submod.before_run_filters)
+            mod.before_section_filters.push(*submod.before_section_filters)
             #mod.sections = submod.sections
           #end
         end

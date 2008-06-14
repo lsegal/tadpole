@@ -16,6 +16,7 @@ module Tadpole
 
     def self.included(klass)
       klass.extend ClassMethods
+      klass.extend Filters::ClassMethods
     end
   end
 end
