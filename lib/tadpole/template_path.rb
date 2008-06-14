@@ -18,5 +18,10 @@ module Tadpole
       klass.extend ClassMethods
       klass.extend Filters::ClassMethods
     end
+    
+    def T(extra_path, extra_opts = {})
+      opts = options.to_hash.update(extra_opts)
+      Template(path, extra_path).new(opts)
+    end
   end
 end

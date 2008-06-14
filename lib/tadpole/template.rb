@@ -8,6 +8,8 @@ end
 
 module Tadpole
   module Template
+    class MissingSectionError < Exception; end
+    
     module ClassMethods
       attr_accessor :path, :template_paths, :sections
       attr_accessor :before_run_filters, :before_section_filters
@@ -182,7 +184,7 @@ module Tadpole
       when SectionProviders::SectionProvider
         section.render(locals, &block)
       else
-        raise ArgumentError, "invalid section #{section.inspect}"
+        raise MissingSectionError, "missing section #{section.inspect}"
       end
     end
 
