@@ -8,7 +8,7 @@ module Tadpole
 
         require 'erb'
         erb = ERB.new(content, nil, '<>')
-        instance_eval(<<-eof, full_path)
+        instance_eval(<<-eof, full_path, -1)
           def render(locals = nil)
             eval(locals.map {|k,v| "\#{k} = \#{v.inspect}" }.join(';')) if locals
             #{erb.src} 
