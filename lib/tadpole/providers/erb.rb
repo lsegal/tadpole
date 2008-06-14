@@ -12,7 +12,7 @@ module Tadpole
         instance_eval(<<-eof, full_path, -1)
           def render(locals = nil)
             eval(locals.map {|k,v| "\#{k} = \#{v.inspect}" }.join(';'), binding) if locals
-            #{erb.src} 
+            instance_eval #{erb.src.inspect}
           end
         eof
       end
