@@ -104,7 +104,7 @@ module Tadpole
     def init; end
 
     def run(opts = {}, &block)
-      return if run_before_run.is_a?(FalseClass)
+      return '' if run_before_run.is_a?(FalseClass)
       
       old_opts = options
       self.options = options.to_hash.update(opts)
@@ -159,17 +159,6 @@ module Tadpole
       end
     end
     
-    def parse_yield_args(*args)
-      sym = args.shift
-      if Hash === sym
-        [nil, sym]
-      elsif sym
-        [sym, args.first || {}]
-      else
-        [nil, {}]
-      end
-    end
-    
     def all_sections(&block)
       subsections.each do |s|
         yield section_name(s)
@@ -213,6 +202,17 @@ module Tadpole
       end
     end
     
+    def parse_yield_args(*args)
+      sym = args.shift
+      if Hash === sym
+        [nil, sym]
+      elsif sym
+        [sym, args.first || {}]
+      else
+        [nil, {}]
+      end
+    end
+
     def find_section_provider(section)
       section = section.to_s
       @providers ||= {}
