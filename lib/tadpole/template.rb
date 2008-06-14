@@ -133,7 +133,7 @@ module Tadpole
         if sects[i+1].is_a?(Array)
           out += run_subsections(section, sects[i+1], locals, &block)
         else
-          out += render(section, locals, &block)
+          out += render(section, locals, true, &block)
         end
         
         break if break_first
@@ -145,14 +145,14 @@ module Tadpole
       self.subsections = subsections.reject {|s| Array === s }
       list = subsections.dup
 
-      render(section, locals) do |*args|
+      render(section, locals, true) do |*args|
         if list.empty?
           raise LocalJumpError, "Section `#{section}' yielded with no sub-section given."
         end
         
         ysection, locals = *parse_yield_args(*args)
         if ysection
-          render(ysection, locals)
+          render(ysection, locals, true)
         else
           data = run_sections(list, true, locals, &block) 
           list.shift; list.shift if list.first.is_a?(Array)
@@ -172,10 +172,10 @@ module Tadpole
       subsections.map {|s| render(s, locals, &block) }.join 
     end
     
-    def render(section, locals = {}, &block)
+    def render(section, locals = {}, call_method = false, &block)
       case section
       when String, Symbol
-        if respond_to?(section) && caller.first !~ /in `#{Regexp.quote section.to_s}'$/
+        if call_method && respond_to?(section) 
           send(section, &block)
         else
           find_section_provider(section).render(locals, &block)

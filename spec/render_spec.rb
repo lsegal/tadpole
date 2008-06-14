@@ -17,4 +17,8 @@ describe Tadpole, '::Template' do
   it "should render heirarchical sections and then continue rendering in order" do
     Template('render/3').new.run.should == '{([])}abc'
   end
+  
+  it "should render filename from inside template" do
+    Template('render/4').new.run.should == '123'
+  end
 end
