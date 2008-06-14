@@ -168,7 +168,9 @@ module Tadpole
       end
     end
     
-    def yieldall(locals = {}); subsections.map {|s| render(s, locals) }.join end
+    def yieldall(locals = {}, &block)
+      subsections.map {|s| render(s, locals, &block) }.join 
+    end
     
     def render(section, locals = {}, &block)
       case section
