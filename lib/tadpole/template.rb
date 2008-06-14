@@ -118,7 +118,7 @@ module Tadpole
     end
     alias to_s run
     
-    def run_sections(sects, break_first = false, &block)
+    def run_sections(sects, break_first = false, locals = {}, &block)
       out = ''
       sects = sects.first if sects.first.is_a?(Array)
       sects.each_with_index do |section, i|
@@ -129,9 +129,9 @@ module Tadpole
         next if run_before_sections.is_a?(FalseClass)
 
         if sects[i+1].is_a?(Array)
-          out += run_subsections(section, sects[i+1], &block)
+          out += run_subsections(section, sects[i+1], locals, &block)
         else
-          out += render(section, &block)
+          out += render(section, locals, &block)
         end
         
         break if break_first
@@ -139,24 +139,40 @@ module Tadpole
       out
     end
     
-    def run_subsections(section, subsections, &block)
+    def run_subsections(section, subsections, locals = {}, &block)
       self.subsections = subsections.reject {|s| Array === s }
       list = subsections.dup
 
-      render(section) do
+      render(section, locals) do |*args|
         if list.empty?
           raise LocalJumpError, "Section `#{section}' yielded with no sub-section given."
         end
         
-        data = run_sections(list, true, &block) 
-        list.shift; list.shift if list.first.is_a?(Array)
-        data
+        ysection, locals = *parse_yield_args(*args)
+        if ysection
+          render(ysection, locals)
+        else
+          data = run_sections(list, true, locals, &block) 
+          list.shift; list.shift if list.first.is_a?(Array)
+          data
+        end
+      end
+    end
+    
+    def parse_yield_args(*args)
+      sym = args.shift
+      if Hash === sym
+        [nil, sym]
+      elsif sym
+        [sym, args.first || {}]
+      else
+        [nil, {}]
       end
     end
     
     def all_sections(&block)
       subsections.each do |s|
-        yield(s) 
+        yield section_name(s)
       end
     end
     
