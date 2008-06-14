@@ -11,7 +11,7 @@ module Tadpole
         erb = ERB.new(content, nil, '<>')
         instance_eval(<<-eof, full_path, -1)
           def render(locals = nil)
-            eval(locals.map {|k,v| "\#{k} = \#{v.inspect}" }.join(';'), binding) if locals
+            instance_eval(locals.map {|k,v| "\#{k} = \#{v.inspect}" }.join(';')) if locals
             instance_eval #{erb.src.inspect}
           end
         eof
