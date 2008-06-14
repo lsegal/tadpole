@@ -7,13 +7,19 @@ module Tadpole
       
       def initialize(full_path, owner)
         super
-        @erb = ERB.new(content, nil, '<>')
-      end
-      
-      def render(locals = nil, &block)
-        b = owner.instance_eval("binding")
-        eval(locals.map {|k,v| "#{k} = locals[#{k.inspect}]" }.join(';'), b) if locals
-        @erb.result(b)
+
+        erb = ERB.new(content, nil, '<>')
+        instance_eval(<<-eof, full_path, -4)
+          def render(locals = nil, &block)
+            if locals
+              opts = owner.options
+              owner.options = owner.options.to_hash.update(locals)
+            end
+            out = owner.instance_eval #{erb.src.inspect}
+            owner.options = opts if locals
+            out
+          end
+        eof
       end
     end
   end

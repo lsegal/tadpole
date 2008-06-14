@@ -4,6 +4,7 @@ class OpenHashStruct < OpenStruct
   def [](key)  send(key.to_s) end
   def []=(k,v) send(key.to_s+'=', v) end
   def to_hash; @table.dup end
+  alias has_key? respond_to?
 end
 
 module Tadpole

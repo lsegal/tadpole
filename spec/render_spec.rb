@@ -21,4 +21,8 @@ describe Tadpole, '::Template' do
   it "should render filename from inside template" do
     Template('render/4').new.run.should == '123'
   end
+  
+  it "should restart subsection render loop if yield is called more times than subsections" do
+    Template('render/5').new.run.should == 'xyzy'
+  end
 end
