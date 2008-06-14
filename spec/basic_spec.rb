@@ -39,7 +39,7 @@ describe Tadpole, '.template' do
     Tadpole.constants.should include("LocalTemplate_b_new")
     Tadpole::Template_new_template.ancestors.should == [Tadpole::Template_new_template, 
       Tadpole::LocalTemplate_b_new_template, Tadpole::LocalTemplate_a_new_template, 
-      Tadpole::LocalTemplate_b_new, Tadpole::LocalTemplate_a_new, Tadpole::TemplatePath,
+      Tadpole::LocalTemplate_b_new, Tadpole::LocalTemplate_a_new, Tadpole::LocalTemplate,
       Tadpole::Template]
   end
 end

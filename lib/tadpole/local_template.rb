@@ -1,5 +1,5 @@
 module Tadpole
-  module TemplatePath
+  module LocalTemplate
     module ClassMethods
       attr_accessor :path
       def template_paths; @template_paths ||= [] end

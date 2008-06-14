@@ -18,7 +18,7 @@ module Tadpole
   end
   
   autoload :Template,     Root + '/tadpole/template'
-  autoload :TemplatePath, Root + '/tadpole/template_path'
+  autoload :LocalTemplate, Root + '/tadpole/local_template'
 end
 
 ['tadpole/main', 'tadpole/providers/section_provider'].each do |path|

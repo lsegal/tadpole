@@ -89,7 +89,7 @@ module Tadpole
       return const_get(name) rescue NameError 
 
       mod = Module.new
-      mod.send(:include, TemplatePath)
+      mod.send(:include, LocalTemplate)
       mod.path = path
       mod.template_paths.unshift(full_path)
       load_setup_rb(full_path, mod)
