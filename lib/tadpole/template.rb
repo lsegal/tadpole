@@ -172,7 +172,7 @@ module Tadpole
     def render(section, locals = {}, &block)
       case section
       when String, Symbol
-        if respond_to? section
+        if respond_to?(section) && caller.first !~ /in `#{Regexp.quote section}'$/
           send(section, &block)
         else
           find_section_provider(section).render(locals, &block)
