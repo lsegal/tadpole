@@ -49,7 +49,9 @@ module Tadpole
       def inspect; "#<%s:0x%s>" % [self.class.to_s.split('::').last, object_id.to_s(16)] end
       
       def method_missing(meth, *args, &block)
-        if owner.respond_to?(meth)
+        if owner.options.respond_to?(meth)
+          owner.options[meth]
+        elsif owner.respond_to?(meth)
           owner.send(meth, *args, &block)
         else
           super
