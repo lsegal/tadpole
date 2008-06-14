@@ -107,7 +107,7 @@ module Tadpole
     def load_setup_rb(full_path, mod)
       setup_file = File.join(full_path, 'setup.rb')
       if File.file? setup_file
-        mod.module_eval(File.read(setup_file).taint, full_path)
+        mod.module_eval(File.read(setup_file).taint, setup_file)
       end
       mod
     end
