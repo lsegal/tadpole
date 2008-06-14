@@ -1,3 +1,5 @@
+begin require 'haml'; rescue LoadError; end 
+
 module Tadpole
   module SectionProviders
     class HamlProvider < SectionProvider
@@ -5,9 +7,10 @@ module Tadpole
       
       def initialize(full_path, owner)
         super
-
-        require 'haml'
         @haml = Haml::Engine.new(content)
+      rescue NameError => e
+        STDERR.puts "You're missing Haml! Install the gem with `gem install haml`."
+        exit
       end
       
       def render(locals = {}, &block)
