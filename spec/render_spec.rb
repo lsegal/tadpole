@@ -25,4 +25,8 @@ describe Tadpole, '::Template' do
   it "should restart subsection render loop if yield is called more times than subsections" do
     Template('render/5').new.run.should == 'xyzy'
   end
+  
+  it "should handle subsections with subsections" do
+    Template('render/6').new.run.should == 'AB(CD)EFG'
+  end
 end

@@ -132,7 +132,9 @@ module Tadpole
         next if run_before_sections.is_a?(FalseClass)
 
         if sects[i+1].is_a?(Array)
+          old, self.subsections = subsections, sects[i+1]
           out += run_subsections(section, sects[i+1], locals, &block)
+          self.subsections = old
         else
           out += render(section, locals, true, &block)
         end
@@ -143,7 +145,7 @@ module Tadpole
     end
     
     def run_subsections(section, subsections, locals = {}, &block)
-      self.subsections = subsections.reject {|s| Array === s }
+      p subsections
       list = subsections.dup
 
       render(section, locals, true) do |*args|
@@ -165,12 +167,13 @@ module Tadpole
     
     def all_sections(&block)
       subsections.each do |s|
+        next if Array === s
         yield section_name(s)
       end
     end
     
     def yieldall(locals = {}, &block)
-      subsections.map {|s| render(s, locals, &block) }.join 
+      run_sections(subsections, false, locals, &block) 
     end
     
     def render(section, locals = {}, call_method = false, &block)
@@ -205,7 +208,7 @@ module Tadpole
         @providers.index(section) || section
       else
         section.respond_to?(:path) ? section.path : section
-      end
+      end.to_s
     end
     
     def parse_yield_args(*args)
