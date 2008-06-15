@@ -44,7 +44,7 @@ describe Tadpole, '.template' do
   end
 end
 
-describe Tadpole, '::Template' do
+describe Tadpole, "::Template" do
   before { Tadpole.template_paths.clear; Tadpole.register_template_path '.' }
 
   it "should act as a class (have a .new, #inspect, etc.)" do

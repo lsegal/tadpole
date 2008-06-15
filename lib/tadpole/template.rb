@@ -145,7 +145,6 @@ module Tadpole
     end
     
     def run_subsections(section, subsections, locals = {}, &block)
-      p subsections
       list = subsections.dup
 
       render(section, locals, true) do |*args|

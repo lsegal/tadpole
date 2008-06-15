@@ -6,7 +6,6 @@ class Insertion
   def initialize(list, value) @list, @value = list, value end
   def before(val) insertion(val, 0) end
   def after(val) insertion(val, 1) end
-  def at(val) insertion(val, 0); @list.delete(val); @list end
   private
   def insertion(val, rel) 
     if index = @list.index(val)
