@@ -59,8 +59,8 @@ module Tadpole
       mod.send(:include, Template)
       mod.path = path
       mod.template_paths = []
-      mod.before_run_filters = []
-      mod.before_section_filters = []
+      mod.before_run_filters = LocalTemplate.before_run_filters.dup
+      mod.before_section_filters = LocalTemplate.before_section_filters.dup
       
       path.split(File::SEPARATOR).inject([]) do |list, el|
         list << el

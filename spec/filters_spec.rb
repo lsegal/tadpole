@@ -23,4 +23,15 @@ describe Tadpole::Filters do
     obj.should_receive(:all).exactly(2).times
     obj.run
   end
+  
+  it "should allow filters specified directly in LocalTemplate" do
+    eval "module Tadpole::LocalTemplate; before_run :xyz end"
+    
+    File.should_receive(:directory?).at_least(:once).and_return(true)
+    obj = Template('a/b/c/d').new
+    obj.should_receive(:xyz)
+    obj.sections []
+    obj.run
+    Tadpole::LocalTemplate.before_run_filters.clear
+  end
 end

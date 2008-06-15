@@ -25,5 +25,7 @@ module Tadpole
       opts = options.to_hash.update(extra_opts)
       Template(path, extra_path).new(opts)
     end
+    
+    included(self)
   end
 end

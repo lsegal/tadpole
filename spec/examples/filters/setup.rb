@@ -7,4 +7,3 @@ def run_a; end
 def all(section) end
   
 def init; sections 'a', 'b' end
-
