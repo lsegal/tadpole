@@ -62,6 +62,7 @@ module Tadpole
       mod.before_run_filters = LocalTemplate.before_run_filters.dup
       mod.before_section_filters = LocalTemplate.before_section_filters.dup
       
+      inherited = []
       path.split(File::SEPARATOR).inject([]) do |list, el|
         list << el
         total_list = File.join(list)
@@ -72,12 +73,14 @@ module Tadpole
             mod.template_paths.unshift(*submod.template_paths)
             mod.before_run_filters.push(*submod.before_run_filters)
             mod.before_section_filters.push(*submod.before_section_filters)
+            inherited.push(*submod.inherited_paths)
             #mod.sections = submod.sections
           #end
         end
         list
       end
       
+      mod.template_paths.push(*inherited)
       mod.template_paths.uniq!
       mod
     end

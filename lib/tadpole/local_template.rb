@@ -3,6 +3,7 @@ module Tadpole
     module ClassMethods
       attr_accessor :path
       def template_paths; @template_paths ||= [] end
+      def inherited_paths; @inherited_paths ||= [] end
       
       def inherits(*templates)
         templates.each do |template|
@@ -11,7 +12,7 @@ module Tadpole
           include mod
           before_run_filters.push(*mod.before_run_filters)
           before_section_filters.push(*mod.before_section_filters)
-          template_paths.push(*mod.template_paths)
+          inherited_paths.push(*mod.template_paths)
         end
       end
     end
