@@ -68,7 +68,7 @@ And to run this file all we need to do is:
     # Running our template will now add our 'header' file to the output
     Tadpole('mytemplate').run
     
-### Heirarchical Sections
+### Hierarchical Sections
 
 Sometimes you may need to encapsulate the output of some sections inside another one. An HTML
 template, for example, will usually contain the page body inside the body tag of a more general
