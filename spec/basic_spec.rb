@@ -22,9 +22,10 @@ describe Tadpole, '.template' do
     Tadpole.register_template_path ''
     File.should_receive(:directory?).exactly(3).times.and_return(true)
     Tadpole('default/html')
-    Tadpole.constants.should include("Template_default_html")
-    Tadpole.constants.should include("LocalTemplate_default_html")
-    Tadpole.constants.should include("LocalTemplate_default")
+    symbolized_consts = Tadpole.constants.map {|c| c.to_sym }
+    symbolized_consts.should include(:Template_default_html)
+    symbolized_consts.should include(:LocalTemplate_default_html)
+    symbolized_consts.should include(:LocalTemplate_default)
   end
   
   it "should override templates from other template paths" do
@@ -32,11 +33,12 @@ describe Tadpole, '.template' do
     Tadpole.register_template_path 'b'
     File.should_receive(:directory?).exactly(6).times.and_return(true)
     Tadpole(:new, :template)
-    Tadpole.constants.should include("Template_new_template")
-    Tadpole.constants.should include("LocalTemplate_a_new_template")
-    Tadpole.constants.should include("LocalTemplate_a_new")
-    Tadpole.constants.should include("LocalTemplate_b_new_template")
-    Tadpole.constants.should include("LocalTemplate_b_new")
+    symbolized_consts = Tadpole.constants.map {|c| c.to_sym }
+    symbolized_consts.should include(:Template_new_template)
+    symbolized_consts.should include(:LocalTemplate_a_new_template)
+    symbolized_consts.should include(:LocalTemplate_a_new)
+    symbolized_consts.should include(:LocalTemplate_b_new_template)
+    symbolized_consts.should include(:LocalTemplate_b_new)
     Tadpole::Template_new_template.ancestors.should == [Tadpole::Template_new_template, 
       Tadpole::LocalTemplate_b_new_template, Tadpole::LocalTemplate_a_new_template, 
       Tadpole::LocalTemplate_b_new, Tadpole::LocalTemplate_a_new, Tadpole::LocalTemplate,

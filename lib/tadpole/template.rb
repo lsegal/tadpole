@@ -204,7 +204,7 @@ module Tadpole
     def section_name(section)
       case section
       when SectionProviders::SectionProvider
-        @providers.index(section) || section
+        @providers.key(section) || section
       else
         section.respond_to?(:path) ? section.path : section
       end.to_s
