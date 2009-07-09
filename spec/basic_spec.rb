@@ -2,61 +2,59 @@ require File.join(File.dirname(__FILE__), '..', 'lib', 'tadpole')
 
 Tadpole.caching = false
 
-describe 'Tadpole' do
+describe Tadpole do
   before { Tadpole.template_paths.clear }
 
   it "should be an alias to Tadpole.template" do
     Tadpole.should_receive(:template).with(:x, :y, :z)
     Tadpole(:x, :y, :z) 
   end
+
+  describe '.template' do
+    it "should raise ArgumentError if path does not exist in template_paths" do
+      lambda { Tadpole(:x, :y, :z) }.should raise_error(ArgumentError)
+    end
+  
+    it "should create the module with the path name" do
+      Tadpole.register_template_path ''
+      File.should_receive(:directory?).exactly(3).times.and_return(true)
+      Tadpole('default/html')
+      symbolized_consts = Tadpole.constants.map {|c| c.to_sym }
+      symbolized_consts.should include(:Template_default_html)
+      symbolized_consts.should include(:LocalTemplate_default_html)
+      symbolized_consts.should include(:LocalTemplate_default)
+    end
+  
+    it "should override templates from other template paths" do
+      Tadpole.register_template_path 'a'
+      Tadpole.register_template_path 'b'
+      File.should_receive(:directory?).exactly(6).times.and_return(true)
+      Tadpole(:new, :template)
+      symbolized_consts = Tadpole.constants.map {|c| c.to_sym }
+      symbolized_consts.should include(:Template_new_template)
+      symbolized_consts.should include(:LocalTemplate_a_new_template)
+      symbolized_consts.should include(:LocalTemplate_a_new)
+      symbolized_consts.should include(:LocalTemplate_b_new_template)
+      symbolized_consts.should include(:LocalTemplate_b_new)
+      Tadpole::Template_new_template.ancestors.should == [Tadpole::Template_new_template, 
+        Tadpole::LocalTemplate_b_new_template, Tadpole::LocalTemplate_a_new_template, 
+        Tadpole::LocalTemplate_b_new, Tadpole::LocalTemplate_a_new, Tadpole::LocalTemplate,
+        Tadpole::Template]
+    end
+  end
 end
 
-describe Tadpole, '.template' do
-  before { Tadpole.template_paths.clear }
-  
-  it "should raise ArgumentError if path does not exist in template_paths" do
-    lambda { Tadpole(:x, :y, :z) }.should raise_error(ArgumentError)
+describe Tadpole::Template do
+  before do
+    Tadpole.template_paths.clear
+    Tadpole.register_template_path '.'
   end
-  
-  it "should create the module with the path name" do
-    Tadpole.register_template_path ''
-    File.should_receive(:directory?).exactly(3).times.and_return(true)
-    Tadpole('default/html')
-    symbolized_consts = Tadpole.constants.map {|c| c.to_sym }
-    symbolized_consts.should include(:Template_default_html)
-    symbolized_consts.should include(:LocalTemplate_default_html)
-    symbolized_consts.should include(:LocalTemplate_default)
-  end
-  
-  it "should override templates from other template paths" do
-    Tadpole.register_template_path 'a'
-    Tadpole.register_template_path 'b'
-    File.should_receive(:directory?).exactly(6).times.and_return(true)
-    Tadpole(:new, :template)
-    symbolized_consts = Tadpole.constants.map {|c| c.to_sym }
-    symbolized_consts.should include(:Template_new_template)
-    symbolized_consts.should include(:LocalTemplate_a_new_template)
-    symbolized_consts.should include(:LocalTemplate_a_new)
-    symbolized_consts.should include(:LocalTemplate_b_new_template)
-    symbolized_consts.should include(:LocalTemplate_b_new)
-    Tadpole::Template_new_template.ancestors.should == [Tadpole::Template_new_template, 
-      Tadpole::LocalTemplate_b_new_template, Tadpole::LocalTemplate_a_new_template, 
-      Tadpole::LocalTemplate_b_new, Tadpole::LocalTemplate_a_new, Tadpole::LocalTemplate,
-      Tadpole::Template]
-  end
-end
-
-describe Tadpole, "::Template" do
-  before { Tadpole.template_paths.clear; Tadpole.register_template_path '.' }
 
   it "should act as a class (have a .new, #inspect, etc.)" do
-    #File.should_receive(:directory?).and_return(true)
-    #Tadpole.caching = false
     Tadpole(:default, :html).should respond_to(:new)
     Tadpole::Template.should === Tadpole(:default, :html).new
-    #Tadpole.caching = false
   end
-  
+
   it "should #run with Symbol sections as methods" do
     File.should_receive(:directory?).at_least(1).times.and_return(true)
     obj = Tadpole(:x, :q).new
@@ -79,7 +77,7 @@ describe Tadpole, "::Template" do
     qs.should_receive(:run).and_return('Z')
     obj.run.should == 'XYZ'
   end
-  
+
   it "should alias .run as new.run" do
     File.should_receive(:directory?).at_least(1).times.and_return(true)
     obj = mock(:obj)
