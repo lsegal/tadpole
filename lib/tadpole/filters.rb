@@ -1,7 +1,8 @@
 module Tadpole
   module Filters
     module ClassMethods
-      def before_section(*args)
+      def before_section(*args, &block)
+        args.push(block) if block
         if args.size == 1
           before_section_filters.push [nil, args.first] 
         elsif args.size == 2
@@ -10,13 +11,14 @@ module Tadpole
           raise ArgumentError, "before_section takes a section followed by a Proc/lambda or Symbol referencing the method name"
         end
       end
+      alias before before_section
       
       def before_section_filters
         @before_section_filters ||= []
       end
       
-      def before_run(meth)
-        before_run_filters.push(meth)
+      def before_run(meth = nil, &block)
+        before_run_filters.push(meth ? meth : block)
       end
       
       def before_run_filters

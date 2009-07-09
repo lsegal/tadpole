@@ -6,24 +6,6 @@ describe Tadpole::Filters do
     Tadpole.register_template_path File.dirname(__FILE__) + '/examples' 
   end
   
-  it "should call before_run filter" do
-    obj = Template(:filters).new
-    obj.should_receive(:test)
-    obj.run
-  end
-
-  it "should call before_section filter for specific section" do
-    obj = Template(:filters).new
-    obj.should_receive(:run_a).with('a')
-    obj.run
-  end
-
-  it "should call before_section filter for all sections" do
-    obj = Template(:filters).new
-    obj.should_receive(:all).exactly(2).times
-    obj.run
-  end
-  
   it "should allow filters specified directly in LocalTemplate" do
     eval "module Tadpole::LocalTemplate; before_run :xyz end"
     
@@ -34,4 +16,44 @@ describe Tadpole::Filters do
     obj.run
     Tadpole::LocalTemplate.before_run_filters.clear
   end
+  
+  describe '#before_run' do
+    it "should call filter" do
+      Template(:filters).before_run_filters.size.should == 2
+      obj = Template(:filters).new
+      obj.should_receive(:test)
+      obj.run
+    end
+    
+    it "should take a block" do
+      Template(:filters).before_run_filters.last.should be_kind_of(Proc)
+    end
+  end
+  
+  describe '#before_section' do
+    it "should call filter for specific section" do
+      obj = Template(:filters).new
+      obj.should_receive(:run_a).with('a')
+      obj.run
+    end
+
+    it "should call filter for all sections" do
+      obj = Template(:filters).new
+      obj.should_receive(:all).exactly(2).times
+      obj.run
+    end
+  
+    it "should take a block for a specific section" do
+      filter = Template(:filters).before_section_filters[3]
+      filter[0].should == :b
+      filter[1].should be_kind_of(Proc)
+    end
+
+    it "should take a block for a all sections" do
+      filter = Template(:filters).before_section_filters[2]
+      filter[0].should == nil
+      filter[1].should be_kind_of(Proc)
+    end
+  end
+
 end
