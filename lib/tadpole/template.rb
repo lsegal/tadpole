@@ -7,6 +7,14 @@ class OpenHashStruct < OpenStruct
   alias has_key? respond_to?
 end
 
+if RUBY_VERSION < "1.9"
+  class Hash
+    def key(value)
+      each {|k, v| return k if v == value }
+    end
+  end
+end
+
 module Tadpole
   module Template
     class MissingSectionError < Exception; end
