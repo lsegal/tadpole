@@ -9,7 +9,7 @@ module Tadpole
         super
 
         erb = ERB.new(content, nil, '<>')
-        instance_eval(<<-eof, full_path, -4)
+        instance_eval(<<-eof, full_path, -2)
           def render(locals = nil, &block)
             if locals
               opts = owner.options
