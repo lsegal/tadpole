@@ -11,7 +11,7 @@ module Tadpole
     end
     
     class SectionProvider
-      attr_accessor :owner, :content
+      attr_accessor :owner, :content, :full_path
       
       EXTENSIONS = []
       
@@ -42,6 +42,7 @@ module Tadpole
       end
         
       def initialize(full_path, owner = nil)
+        self.full_path = full_path
         self.owner = owner
         self.content = File.read(full_path)
       end
