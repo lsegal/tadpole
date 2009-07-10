@@ -48,6 +48,18 @@ module Tadpole
       const_set(name, mod) 
     end
     
+    def create_template(path)
+      mod = Module.new
+      mod.send(:include, Template)
+      mod.path = path
+      mod.template_paths = []
+
+      add_template_filters(mod)
+      add_inherited_templates(mod, path)
+
+      mod
+    end
+
     private
 
     def absolutize_path(*path)
@@ -57,14 +69,12 @@ module Tadpole
       File.expand_path(File.join(path))[(Dir.pwd.length+1)..-1]
     end
     
-    def create_template(path)
-      mod = Module.new
-      mod.send(:include, Template)
-      mod.path = path
-      mod.template_paths = []
+    def add_template_filters(mod)
       mod.before_run_filters = LocalTemplate.before_run_filters.dup
       mod.before_section_filters = LocalTemplate.before_section_filters.dup
-      
+    end
+    
+    def add_inherited_templates(mod, path)
       inherited = []
       path.split(File::SEPARATOR).inject([]) do |list, el|
         list << el
@@ -72,20 +82,16 @@ module Tadpole
         find_matching_template_paths(total_list).each do |subpath|
           submod = create_template_mod(subpath, total_list)
           mod.send :include, submod
-          #if total_list == path
-            mod.template_paths.unshift(*submod.template_paths)
-            mod.before_run_filters.push(*submod.before_run_filters)
-            mod.before_section_filters.push(*submod.before_section_filters)
-            inherited.push(*submod.inherited_paths)
-            #mod.sections = submod.sections
-          #end
+          mod.template_paths.unshift(*submod.template_paths)
+          mod.before_run_filters.push(*submod.before_run_filters)
+          mod.before_section_filters.push(*submod.before_section_filters)
+          inherited.push(*submod.inherited_paths)
         end
         list
       end
       
       mod.template_paths.push(*inherited)
       mod.template_paths.uniq!
-      mod
     end
     
     def create_template_mod(full_path, path)

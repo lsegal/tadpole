@@ -9,6 +9,24 @@ describe Tadpole do
     Tadpole.should_receive(:template).with(:x, :y, :z)
     Tadpole(:x, :y, :z) 
   end
+  
+  describe '.create_template' do
+    it "should create a template that does not exist on disk" do
+      template = Tadpole.create_template('x/y/z')
+      template.ancestors.should include(Tadpole::Template)
+      template.path.should == 'x/y/z'
+    end
+    
+    it "should inherit templates with same path" do
+      module Tadpole::LocalTemplate_x_y; end
+      File.should_receive(:directory?).with('./x').and_return(true)
+      File.should_receive(:directory?).with('./x/y').and_return(false)
+      Tadpole.register_template_path '.'
+      template = Tadpole.create_template('x/y')
+      template.ancestors.should_not include(Tadpole::LocalTemplate_x_y)
+      template.ancestors.should include(Tadpole::LocalTemplate_x)
+    end
+  end
 
   describe '.template' do
     it "should raise ArgumentError if path does not exist in template_paths" do
