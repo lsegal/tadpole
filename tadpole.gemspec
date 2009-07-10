@@ -1,6 +1,6 @@
 SPEC = Gem::Specification.new do |s|
   s.name          = "tadpole"
-  s.version       = "0.1.2"
+  s.version       = "0.1.3"
   s.date          = "2009-07-10"
   s.author        = "Loren Segal"
   s.email         = "lsegal@soen.ca"

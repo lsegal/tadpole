@@ -1,7 +1,5 @@
-require 'rubygems'
-
 module Tadpole
-  Version = '0.1.2'
+  Version = '0.1.3'
   Root = File.dirname(__FILE__) 
   
   module SectionProviders
