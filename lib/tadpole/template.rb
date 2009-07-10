@@ -123,14 +123,19 @@ module Tadpole
       self.options = old_opts
       out
     rescue => e
-      me = NoMethodError.new("In #{self.inspect}: #{e.message}")
-      me.set_backtrace(e.backtrace)
+      provider = find_section_provider(current_section)
+      line = provider.full_path
+      line += " (template)" if provider.is_a?(SectionProviders::TemplateProvider)
+      line += ":1:in#{@compiled_sections ? ' compiled' : ''} section `#{current_section}'"
+      me = NoMethodError.new(e.message)
+      me.set_backtrace([line] + e.backtrace)
       raise me
     end
     alias to_s run
     
     def run_sections(sects, break_first = false, locals = {}, &block)
       out = ''
+      raise ArgumentError, "Template(#{path}) is missing sections" unless sects
       sects = sects.first if sects.first.is_a?(Array)
       sects.each_with_index do |section, i|
         (break_first ? break : next) if section.is_a?(Array)
