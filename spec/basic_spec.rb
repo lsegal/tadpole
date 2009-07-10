@@ -26,6 +26,19 @@ describe Tadpole do
       template.ancestors.should_not include(Tadpole::LocalTemplate_x_y)
       template.ancestors.should include(Tadpole::LocalTemplate_x)
     end
+    
+    it "should allow sections to be set programmatically" do
+      mod = Tadpole.create_template('mine')
+      template = mod.new
+      template.class.should == Tadpole::Template_mine
+      class << template
+        def a; 'a' end
+        def b; 'b' end
+        def c; 'c' end
+      end
+      template.sections :a, :b, :c
+      template.run.should == 'abc'
+    end
   end
 
   describe '.template' do
@@ -69,8 +82,17 @@ describe Tadpole::Template do
   end
 
   it "should act as a class (have a .new, #inspect, etc.)" do
-    Tadpole(:default, :html).should respond_to(:new)
-    Tadpole::Template.should === Tadpole(:default, :html).new
+    File.should_receive(:directory?).with('./default/html').and_return(true)
+    mod = Tadpole(:default, :html)
+    mod.should respond_to(:new)
+    template = mod.new
+    Tadpole::Template.should === template
+    template.inspect.should =~ /#<Template:(\S+) path='default\/html' sections=nil>/
+    template.class.should == Tadpole::Template_default_html
+  end
+  
+  it "should create two template modules for the same template in separate template paths" do
+    
   end
 
   it "should #run with Symbol sections as methods" do

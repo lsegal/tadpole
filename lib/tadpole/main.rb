@@ -34,30 +34,21 @@ module Tadpole
     
     def template(*path)
       path = absolutize_path(*path)
+      exists = find_matching_template_paths(path)
+      raise ArgumentError, "no such template `#{path}'" if exists.empty?
+
+      create_template(*path)
+    end
+    
+    def create_template(*path)
+      path = absolutize_path(*path)
       name = template_mod_name(path)
 
       remove_const(name) unless caching rescue NameError
       return const_get(name) rescue NameError
-      
-      exists = find_matching_template_paths(path)
-      if exists.empty?
-        raise ArgumentError, "no such template `#{path}'"
-      end
-      
-      mod = create_template(path)
+
+      mod = create_template_mod(path)
       const_set(name, mod) 
-    end
-    
-    def create_template(path)
-      mod = Module.new
-      mod.send(:include, Template)
-      mod.path = path
-      mod.template_paths = []
-
-      add_template_filters(mod)
-      add_inherited_templates(mod, path)
-
-      mod
     end
 
     private
@@ -80,7 +71,7 @@ module Tadpole
         list << el
         total_list = File.join(list)
         find_matching_template_paths(total_list).each do |subpath|
-          submod = create_template_mod(subpath, total_list)
+          submod = create_local_template_mod(subpath, total_list)
           mod.send :include, submod
           mod.template_paths.unshift(*submod.template_paths)
           mod.before_run_filters.push(*submod.before_run_filters)
@@ -94,8 +85,20 @@ module Tadpole
       mod.template_paths.uniq!
     end
     
-    def create_template_mod(full_path, path)
-      name = 'Local'+template_mod_name(full_path)
+    def create_template_mod(path)
+      mod = Module.new
+      mod.send(:include, Template)
+      mod.path = path
+      mod.template_paths = []
+
+      add_template_filters(mod)
+      add_inherited_templates(mod, path)
+
+      mod
+    end
+    
+    def create_local_template_mod(full_path, path)
+      name = 'Local' + template_mod_name(full_path)
       
       remove_const(name) unless caching rescue NameError
       return const_get(name) rescue NameError 
