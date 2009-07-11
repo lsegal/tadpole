@@ -73,15 +73,17 @@ module Tadpole
         find_matching_template_paths(total_list).each do |subpath|
           submod = create_local_template_mod(subpath, total_list)
           mod.send :include, submod
+
+          inherited = submod.inherited_paths
+          inherited.reject! {|path| mod.template_paths.include?(path) }
+          mod.template_paths.unshift(*inherited)
           mod.template_paths.unshift(*submod.template_paths)
           mod.before_run_filters.push(*submod.before_run_filters)
           mod.before_section_filters.push(*submod.before_section_filters)
-          inherited.push(*submod.inherited_paths)
         end
         list
       end
-      
-      mod.template_paths.push(*inherited)
+
       mod.template_paths.uniq!
     end
     
