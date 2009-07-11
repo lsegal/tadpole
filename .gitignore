@@ -2,3 +2,4 @@ coverage
 pkg
 .yardoc
 doc
+.DS_Store
