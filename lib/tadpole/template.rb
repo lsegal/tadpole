@@ -248,7 +248,7 @@ module Tadpole
         break if provider && filename
       end
       
-      raise ArgumentError, "missing section `#{section}'" if !provider 
+      raise ArgumentError, "Template(#{path}) is missing section `#{section}'" if !provider 
       @providers[section] = provider.new(filename, self)
     end
     
@@ -264,7 +264,7 @@ module Tadpole
       if file = find_template(filename)
         File.read(file)
       else
-        raise ArgumentError, "missing template file `#{filename}' in #{self.inspect}"
+        raise ArgumentError, "Template(#{path}) is missing template file `#{filename}'"
       end
     end
   end
