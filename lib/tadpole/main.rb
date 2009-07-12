@@ -19,6 +19,8 @@ class Insertion
 end
 
 module Tadpole
+  class MissingTemplateError < ArgumentError; end
+  
   class << self
     attr_accessor :caching
     
@@ -35,7 +37,7 @@ module Tadpole
     def template(*path)
       path = absolutize_path(*path)
       exists = find_matching_template_paths(path)
-      raise ArgumentError, "no such template `#{path}'" if exists.empty?
+      raise MissingTemplateError, "no such template `#{path}'" if exists.empty?
 
       create_template(*path)
     end

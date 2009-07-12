@@ -40,5 +40,9 @@ describe Tadpole::LocalTemplate do
     it "should refer to the same template path even in a subclass" do
       Tadpole('T/derived').run.should == 'info'
     end
+    
+    it "should refer to the subclassed path if the section exists in the subclass" do
+      Tadpole('T/derived2').run.should == 'notinfo'
+    end
   end
 end
