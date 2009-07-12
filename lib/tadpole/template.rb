@@ -242,7 +242,7 @@ module Tadpole
       filename, provider = nil, nil
       template_paths.each do |template_path|
         SectionProviders.providers.each do |prov|
-          filename = prov.provides?(File.join(template_path, section))
+          filename = prov.provides?(self, File.join(template_path, section))
           break provider = prov if filename
         end
         break if provider && filename

@@ -21,7 +21,7 @@ module Tadpole
       # extensions.
       # 
       # @return [String, nil] The full pathname
-      def self.provides?(basename) 
+      def self.provides?(object, basename) 
         self.const_get("EXTENSIONS").any? do |ext|
           path = basename + ext
           return path if path_suitable?(path) 
