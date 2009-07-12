@@ -24,6 +24,14 @@ module Tadpole
     
     def T(extra_path, extra_opts = {})
       opts = options.to_hash.update(extra_opts)
+      dirname = File.dirname(caller.first[/^(.+?):/, 1])
+      path = nil
+      Tadpole.template_paths.each do |template_path|
+        if dirname.index(template_path) == 0
+          path = dirname[template_path.length..-1]
+          break
+        end
+      end
       Template(path, extra_path).new(opts)
     end
     

@@ -31,4 +31,14 @@ describe Tadpole::LocalTemplate do
       paths.should == ["inherits/inherits_e", "inherits/inherits_b", "inherits/inherits_a", "inherits"]
     end
   end
+  
+  describe '.T' do
+    it "should refer to a template" do
+      Tadpole('T').run.should == 'info'
+    end
+    
+    it "should refer to the same template path even in a subclass" do
+      Tadpole('T/derived').run.should == 'info'
+    end
+  end
 end
