@@ -1,5 +1,5 @@
 module Tadpole
-  Version = '0.1.3'
+  Version = '0.1.4'
   Root = File.dirname(__FILE__) 
   
   module SectionProviders
