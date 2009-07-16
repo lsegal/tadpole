@@ -28,6 +28,26 @@ describe Tadpole::Filters do
     it "should take a block" do
       Template(:filters).before_run_filters.last.should be_kind_of(Proc)
     end
+    
+    it "should execute block in instance context" do
+      module Tadpole::LocalTemplate
+        before_run do
+          @xyz = self
+          false
+        end
+      end
+      t = Tadpole.create_template('block_run')
+      module Tadpole::Template_block_run
+        def sections
+          ['x']
+        end
+        def x; "x" end
+      end
+      obj = t.new 
+      obj.run.should == ""
+      obj.instance_variable_get("@xyz").should == obj
+      Tadpole::LocalTemplate.before_run_filters.clear
+    end
   end
   
   describe '#before_section' do
@@ -53,6 +73,26 @@ describe Tadpole::Filters do
       filter = Template(:filters).before_section_filters[2]
       filter[0].should == nil
       filter[1].should be_kind_of(Proc)
+    end
+
+    it "should execute block in instance context" do
+      module Tadpole::LocalTemplate
+        before_section(:x) do
+          @xyz = options
+          false
+        end
+      end
+      t = Tadpole.create_template('block_sections')
+      module Tadpole::Template_block_sections
+        def init; sections :x end
+        def x; 'x' end
+      end
+      obj = t.new 
+      obj.run(:foo => 1).should == ""
+      opts = obj.instance_variable_get("@xyz")
+      opts.should be_instance_of(OpenHashStruct)
+      opts.foo.should == 1
+      Tadpole::LocalTemplate.before_run_filters.clear
     end
   end
 

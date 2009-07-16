@@ -29,8 +29,7 @@ module Tadpole
     module InstanceMethods
       def run_before_run
         self.class.before_run_filters.each do |meth|
-          meth = method(meth) if meth.is_a?(Symbol)
-          result = meth.call 
+          result = call_before_method(meth, false)
           return result if result.is_a?(FalseClass)
         end
       end
@@ -39,12 +38,20 @@ module Tadpole
         self.class.before_section_filters.each do |info|
           result, sec, meth = nil, *info
           if sec.nil? || sec.to_s == current_section.to_s
-            meth = method(meth) if meth.is_a?(Symbol)
-            args = meth.arity == 0 ? [] : [current_section]
-            result = meth.call(*args)
+            result = call_before_method(meth)
           end
 
           return result if result.is_a?(FalseClass)
+        end
+      end
+      
+      def call_before_method(meth, pass_args = true)
+        if meth.is_a?(Symbol)
+          meth = method(meth)
+          args = meth.arity == 0 ? [] : [current_section]
+          meth.call(*args)
+        else
+          instance_eval(&meth)
         end
       end
     end
