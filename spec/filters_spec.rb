@@ -92,7 +92,7 @@ describe Tadpole::Filters do
       opts = obj.instance_variable_get("@xyz")
       opts.should be_instance_of(OpenHashStruct)
       opts.foo.should == 1
-      Tadpole::LocalTemplate.before_run_filters.clear
+      Tadpole::LocalTemplate.before_section_filters.clear
     end
   end
 
