@@ -1,0 +1,506 @@
+2009-07-20  Loren Segal <lsegal@soen.ca>
+
+  * lib/tadpole.rb, tadpole.gemspec: Bump to 0.1.6
+
+  * spec/filters_spec.rb: Fix test not removing LocalTemplate before_section
+  filters
+
+2009-07-16  Loren Segal <lsegal@soen.ca>
+
+  * lib/tadpole.rb, tadpole.gemspec: Bump to version 0.1.5
+
+  * lib/tadpole/filters.rb, spec/filters_spec.rb: Run before filters in context
+  of instance object
+
+2009-07-12  Loren Segal <lsegal@soen.ca>
+
+  * lib/tadpole.rb, tadpole.gemspec: Bump to version 0.1.4
+
+  * spec/erb_spec.rb, spec/examples/erb/a.erb, spec/examples/erb/setup.rb,
+  spec/examples/erb2/_a.erb, spec/examples/erb2/setup.rb: Spec ERBProvider
+
+2009-07-11  Loren Segal <lsegal@soen.ca>
+
+  * lib/tadpole/local_template.rb, lib/tadpole/main.rb,
+  spec/examples/T/derived2/setup.rb, spec/examples/T/derived2/test/setup.rb,
+  spec/local_template_spec.rb: Add more specs, allow T() to use template within
+  subclass if available
+
+  * lib/tadpole/local_template.rb, spec/examples/T/derived/setup.rb,
+  spec/examples/T/setup.rb, spec/examples/T/test/setup.rb,
+  spec/inherits_spec.rb, spec/local_template_spec.rb: Spec T() method and make
+  sure it refers to the template path it's defined in
+
+  * lib/tadpole/template.rb: Better exception messages
+
+  * lib/tadpole/providers/section_provider.rb, lib/tadpole/template.rb: Add
+  section object param to SectionProvider.provides?
+
+  * lib/tadpole/local_template.rb, lib/tadpole/main.rb,
+  spec/examples/inherits/inherits_a/setup.rb,
+  .../inherits/inherits_b/inherits_c/setup.rb,
+  spec/examples/inherits/inherits_b/setup.rb,
+  spec/examples/inherits/inherits_d/setup.rb,
+  spec/examples/inherits/inherits_e/setup.rb, spec/inherits_spec.rb: Spec 
+  command and fix inheritance order
+
+  * .gitignore: Update gitignore
+
+  * lib/tadpole/main.rb, lib/tadpole/providers/erb.rb: Better stacktraces with
+  eval's
+
+2009-07-10  Loren Segal <lsegal@soen.ca>
+
+  * lib/tadpole.rb, tadpole.gemspec: Bump version to 0.1.3
+
+  * lib/tadpole/main.rb, spec/basic_spec.rb: Virtual templates should get
+  constants defined as well (refactor + spec)
+
+  * lib/tadpole/main.rb, spec/basic_spec.rb: Make Tadpole.create_template
+  public and refactor/spec code.  Users can now create templates without
+  requiring files on disk. Simply use
+  Tadpole.create_template('path/to/template'). Inheritance will still be
+  checked for the path name provided.
+
+  * lib/tadpole.rb, tadpole.gemspec: Bump version to 0.1.2
+
+  * lib/tadpole/template.rb: Make backtraces a little more informative
+
+  * lib/tadpole/providers/section_provider.rb,
+  lib/tadpole/providers/template.rb: Add #full_path accessor to
+  SectionProviders
+
+  * lib/tadpole/providers/erb.rb: Fix line number for backtraces
+
+2009-07-09  Loren Segal <lsegal@soen.ca>
+
+  * lib/tadpole/template.rb: Fix 1.8.x regression (implement Ruby1.9's
+  Hash#key)
+
+  * Rakefile, lib/tadpole.rb, tadpole.gemspec: Bump version to 0.1.1
+
+  * .gitignore: Update gitignore
+
+  * lib/tadpole/filters.rb, spec/examples/filters/setup.rb,
+  spec/filters_spec.rb: Allow before_section and before_run filters to take
+  blocks, add before alias for sections
+
+  * lib/tadpole/main.rb, spec/array_spec.rb: Add specs for Insertion and allow
+  insertion to ignore subsections
+
+  * spec/basic_spec.rb: Refactor specs
+
+2009-02-03  Loren Segal <lsegal@soen.ca>
+
+  * lib/tadpole/template.rb, spec/basic_spec.rb: Add compatibility for Ruby1.9
+  (constants are symbolized and Hash#index is obsoleted by Hash#key)
+
+  * README.markdown: Fix typo
+
+2008-06-15  Loren Segal <lsegal@soen.ca>
+
+  * lib/tadpole/local_template.rb, lib/tadpole/main.rb: Fix inheritance order
+  of inherited paths
+
+  * lib/tadpole/main.rb, lib/tadpole/template.rb, spec/basic_spec.rb: Something
+  broke??
+
+  * lib/tadpole/main.rb, lib/tadpole/template.rb,
+  spec/examples/render/6/setup.rb, spec/render_spec.rb: Fix yield rendering
+  behaviour
+
+  * lib/tadpole/local_template.rb, lib/tadpole/main.rb,
+  spec/examples/filters/setup.rb, spec/filters_spec.rb: Allow base filters set
+  on LocalTemplate
+
+2008-06-14  Loren Segal <lsegal@soen.ca>
+
+  * lib/tadpole.rb, lib/tadpole/local_template.rb, lib/tadpole/main.rb,
+  lib/tadpole/template_path.rb, spec/basic_spec.rb: Rename TemplatePath to
+  LocalTemplate
+
+  * lib/tadpole/template_path.rb: inherited mod copies before_filters over
+
+  * lib/tadpole/providers/erb.rb, lib/tadpole/template.rb,
+  spec/examples/render/5/setup.rb, spec/render_spec.rb: Fix erb handling of
+  locals (again)
+
+  * lib/tadpole/providers/erb.rb, lib/tadpole/template.rb,
+  spec/examples/render/4/a.erb, spec/examples/render/4/setup.rb,
+  spec/render_spec.rb: Remove method definition
+
+  * lib/tadpole/template.rb: yieldall should accept block
+
+  * lib/tadpole/providers/erb.rb, spec/basic_spec.rb,
+  spec/examples/render/1/a.txt, spec/examples/render/1/b.txt,
+  spec/examples/render/1/d.erb, spec/examples/render/1/setup.rb,
+  spec/examples/render/2/setup.rb, spec/examples/render/3/setup.rb,
+  spec/render_spec.rb: Specs for rendering order
+
+  * lib/tadpole/providers/erb.rb: Fix local variable assignment in ERB provider
+
+  * lib/tadpole/template.rb: Add locals to yieldall
+
+  * lib/tadpole/template.rb: Re-yield blocks if theyre called again
+
+  * Rakefile: Don't automatically do rcov
+
+  * lib/tadpole/template.rb: Make sure section is string
+
+  * lib/tadpole/template.rb: Avoid recursive rendering
+
+  * lib/tadpole/template.rb, lib/tadpole/template_path.rb: Add T() shorthand
+
+  * benchmarks/eval-vs-non-eval.rb, lib/tadpole/providers/erb.rb: Switch to
+  instance_eval because it is faster.
+
+  * lib/tadpole/providers/erb.rb: Hack support for ERB and locals (FIXME: make
+  more efficient)
+
+  * benchmarks/require-vs-none.rb: Add benchmark for require
+
+  * lib/tadpole/providers/erb.rb, lib/tadpole/providers/haml.rb: Move require's
+  outside of code body (require calls are slow!)
+
+  * lib/tadpole/main.rb: Use setup file as module_eval file
+
+  * lib/tadpole/template.rb: Fix filter handling
+
+2008-06-13  Loren Segal <lsegal@soen.ca>
+
+  * lib/tadpole/providers/section_provider.rb: Fix handling of options
+  variables
+
+  * lib/tadpole/providers/erb.rb: Offset line number to start src code from 1
+
+  * lib/tadpole/main.rb, lib/tadpole/providers/erb.rb: eval from file
+
+  * lib/tadpole/template.rb: Allow yielding of section or options hash
+
+  * lib/tadpole/filters.rb, lib/tadpole/main.rb, lib/tadpole/template.rb,
+  lib/tadpole/template_path.rb, spec/basic_spec.rb,
+  spec/examples/filters/setup.rb, spec/filters_spec.rb: Updates for filters
+
+  * lib/tadpole.rb, lib/tadpole/filters.rb, lib/tadpole/template.rb,
+  spec/basic_spec.rb: Add before filters
+
+  * lib/tadpole/template.rb: Fix subsection handling
+
+  * lib/tadpole/template.rb: Fix options handling
+
+  * lib/tadpole/template.rb: String == Symbol
+
+  * lib/tadpole/template.rb: Use openstruct for options
+
+  * tadpole.gemspec: Use LICENSE not LICENSE.txt in gemspec
+
+  * benchmarks/run-caching.rb: Fairer benchmark test
+
+  * LICENSE, README.html, README.markdown,
+  examples/example2/tadpole/html/main.haml,
+  examples/example2/tadpole/markdown/title.md, tadpole.gemspec: Update
+  documentation, add LICENSE
+
+  * Rakefile, examples/example2/tadpole/html/readme/setup.rb,
+  lib/tadpole/main.rb, tadpole.gemspec: Fix inheritance bug, add gemspec
+
+2008-06-12  Loren Segal <lsegal@soen.ca>
+
+  * README.html, README.markdown,
+  examples/example2/tadpole/markdown/quick/create.md,
+  .../example2/tadpole/markdown/quick/override.md: Templates
+
+  * README.html, README.markdown,
+  examples/example2/tadpole/html/readme/setup.rb,
+  examples/example2/tadpole/markdown/examples.md,
+  examples/example2/tadpole/markdown/quick/create.md,
+  .../tadpole/markdown/quick/heirarchical.md,
+  .../example2/tadpole/markdown/quick/override.md,
+  examples/example2/tadpole/markdown/quick/quick.erb,
+  examples/example2/tadpole/markdown/quick/setup.rb,
+  examples/example2/tadpole/markdown/setup.rb: Update templates
+
+  * benchmarks/run-caching.rb: Update benchmark to use example1 (example2
+  changes too much)
+
+  * lib/tadpole/main.rb, lib/tadpole/providers/erb.rb: Cache on, show file and
+  line when eval'ing ERB
+
+  * lib/tadpole/main.rb, lib/tadpole/providers/template.rb,
+  lib/tadpole/template.rb: Update inheritance behaviour
+
+  * README.html, README.markdown: Templates
+
+  * README.html, README.markdown: Templates
+
+  * README.html, README.markdown: Templates
+
+  * README.html, README.markdown, examples/example2/tadpole/markdown/setup.rb:
+  Templates
+
+  * README.markdown: Templates
+
+  * README.html, README.markdown,
+  examples/example2/tadpole/markdown/scenarios.md,
+  examples/example2/tadpole/markdown/setup.rb,
+  examples/example2/tadpole/markdown/what.md: Templates
+
+  * README.html, README.markdown, examples/example2/tadpole/markdown/what.md:
+  Templates
+
+  * README.html, README.markdown, examples/example2/tadpole/markdown/what.md:
+  Templates
+
+  * README.html, README.markdown, examples/example2/tadpole/markdown/title.md:
+  Templates
+
+  * README.html, README.markdown, examples/example2/tadpole/markdown/title.md:
+  Templates
+
+  * README.html, README.markdown,
+  examples/example2/tadpole/markdown/but_i_have.md,
+  examples/example2/tadpole/markdown/copyright.md,
+  .../tadpole/markdown/readme/readme_notice.txt,
+  examples/example2/tadpole/markdown/scenarios.md,
+  examples/example2/tadpole/markdown/setup.rb,
+  examples/example2/tadpole/markdown/title.md,
+  examples/example2/tadpole/markdown/what.md,
+  examples/example2/tadpole/markdown/what_is.md,
+  examples/example2/tadpole/markdown/why.md, lib/tadpole/template.rb: Update
+  templates
+
+  * README.html, README.markdown: Update readmes
+
+  * README.markdown, benchmarks/run-caching.rb, examples/example1/run.rb,
+  examples/example2/run.rb, examples/example2/tadpole/html/content.haml,
+  examples/example2/tadpole/html/main.haml,
+  examples/example2/tadpole/html/readme/setup.rb,
+  examples/example2/tadpole/html/setup.rb,
+  examples/example2/tadpole/markdown/but_i_have.md,
+  examples/example2/tadpole/markdown/copyright.md,
+  .../tadpole/markdown/readme/readme_notice.txt,
+  examples/example2/tadpole/markdown/readme/setup.rb,
+  examples/example2/tadpole/markdown/setup.rb,
+  examples/example2/tadpole/markdown/title.md,
+  examples/example2/tadpole/markdown/what_is.md,
+  examples/example2/treate/html/content.haml,
+  examples/example2/treate/html/main.haml,
+  examples/example2/treate/html/readme/setup.rb,
+  examples/example2/treate/html/setup.rb,
+  examples/example2/treate/markdown/but_i_have.txt,
+  examples/example2/treate/markdown/copyright.erb,
+  .../treate/markdown/readme/readme_notice.txt,
+  examples/example2/treate/markdown/readme/setup.rb,
+  examples/example2/treate/markdown/setup.rb,
+  examples/example2/treate/markdown/title.txt,
+  examples/example2/treate/markdown/what_is.txt, lib/tadpole.rb,
+  lib/tadpole/main.rb, lib/tadpole/providers/erb.rb,
+  lib/tadpole/providers/file.rb, lib/tadpole/providers/haml.rb,
+  lib/tadpole/providers/markaby.rb, lib/tadpole/providers/section_provider.rb,
+  lib/tadpole/providers/template.rb, lib/tadpole/template.rb,
+  lib/tadpole/template_path.rb, lib/templater.rb, lib/templater/main.rb,
+  lib/templater/providers/erb.rb, lib/templater/providers/file.rb,
+  lib/templater/providers/haml.rb, lib/templater/providers/markaby.rb,
+  lib/templater/providers/section_provider.rb,
+  lib/templater/providers/template.rb, lib/templater/template.rb,
+  lib/templater/template_path.rb, spec/basic_spec.rb: Rename to tadpole
+
+2008-06-11  Loren Segal <lsegal@soen.ca>
+
+  * lib/templater/template.rb: Cache providers on section.to_s
+
+  * lib/templater/template.rb: Don't replace sections. create
+  @compiled_sections
+
+  * examples/example2/treate/html/readme/setup.rb,
+  examples/example2/treate/markdown/readme/setup.rb, lib/templater/main.rb,
+  lib/templater/template.rb, spec/basic_spec.rb: Update specs and automatically
+  inherit ..
+
+  * benchmarks/run-caching.rb, examples/example2/run.rb, lib/templater.rb,
+  lib/templater/main.rb, lib/templater/providers/erb.rb,
+  lib/templater/providers/file.rb, lib/templater/providers/haml.rb,
+  lib/templater/providers/markaby.rb,
+  lib/templater/providers/section_provider.rb,
+  lib/templater/providers/template.rb, lib/templater/template.rb: Change
+  provider api to do extension lookup on its own. Add benchmarks for provider
+  caching vs. compile_at_init caching
+
+  * spec/basic_spec.rb: Try the 'path' format too
+
+  * examples/example1/custom/html/body/setup.rb,
+  examples/example1/custom/html/setup.rb, examples/example1/run.rb,
+  examples/example2/treate/html/readme/setup.rb,
+  examples/example2/treate/html/setup.rb,
+  examples/example2/treate/markdown/readme/setup.rb, lib/templater/main.rb,
+  lib/templater/template_path.rb: Various changes for relative path support
+
+  * README.html, README.markdown, examples/example2/treate/markdown/title.txt:
+  Stuff
+
+  * README.markdown: Add markdown file
+
+  * README.html, .../treate/markdown/readme/readme_notice.txt: Stuff
+
+  * oldREADME.markdown: Stuff
+
+  * README.html, README.markdown, .../treate/markdown/readme/readme_notice.txt,
+  oldREADME.markdown: Stuff
+
+  * README.html, README.markdown, examples/example2/treate/markdown/title.txt:
+  link updates
+
+  * README.html, README.markdown, examples/example2/treate/markdown/title.txt:
+  Author
+
+  * README.html, README.markdown,
+  examples/example2/treate/markdown/copyright.erb: Update copyright info
+  section
+
+  * README.html, examples/example2/run.rb,
+  examples/example2/treate/html/readme/setup.rb,
+  .../treate/markdown/readme/readme_notice.txt,
+  examples/example2/treate/markdown/readme/setup.rb,
+  examples/example2/treate/readme/readme_notice.txt,
+  examples/example2/treate/readme/setup.rb, lib/templater/main.rb,
+  lib/templater/template.rb, lib/templater/template_path.rb,
+  spec/basic_spec.rb: Fix various template_paths issues
+
+2008-06-10  Loren Segal <lsegal@soen.ca>
+
+  * spec/basic_spec.rb: Update specs
+
+  * README.markdown: Update readme
+
+  * examples/example2/treate/readme/readme_notice.txt: Update code block
+
+  * README.markdown, examples/example2/treate/markdown/what_is.txt,
+  examples/example2/treate/readme/readme_notice.txt: Update templates
+
+  * README.textile: Remove textile readme
+
+  * README.markdown, examples/example2/treate/html/content.haml,
+  examples/example2/treate/html/copyright.haml,
+  examples/example2/treate/html/main.haml,
+  examples/example2/treate/html/setup.rb,
+  examples/example2/treate/markdown/but_i_have.txt,
+  examples/example2/treate/markdown/copyright.erb,
+  examples/example2/treate/markdown/setup.rb,
+  examples/example2/treate/markdown/title.txt,
+  examples/example2/treate/markdown/what_is.txt,
+  examples/example2/treate/readme/readme_notice.txt,
+  examples/example2/treate/readme/setup.rb,
+  examples/example2/treate/textile/but_i_have.txt,
+  examples/example2/treate/textile/copyright.erb,
+  examples/example2/treate/textile/setup.rb,
+  examples/example2/treate/textile/title.txt,
+  examples/example2/treate/textile/what_is.txt: Update templates
+
+  * README, README.textile: rename README
+
+  * README: Update README
+
+  * examples/example2/treate/html/content.haml,
+  examples/example2/treate/html/main.haml,
+  examples/example2/treate/html/setup.rb,
+  examples/example2/treate/markdown/but_i_have.txt,
+  examples/example2/treate/markdown/copyright.erb,
+  examples/example2/treate/markdown/setup.rb,
+  examples/example2/treate/markdown/title.txt,
+  examples/example2/treate/markdown/what_is.txt,
+  examples/example2/treate/readme/readme_notice.txt,
+  examples/example2/treate/readme/setup.rb,
+  examples/example2/treate/textile/but_i_have.txt,
+  examples/example2/treate/textile/copyright.erb,
+  examples/example2/treate/textile/setup.rb,
+  examples/example2/treate/textile/title.txt,
+  examples/example2/treate/textile/what_is.txt: Update examples (back to
+  textile)
+
+  * README, lib/templater/main.rb, lib/templater/providers/section_provider.rb,
+  lib/templater/template.rb: Various fixes, generate readme
+
+  * examples/example2/treate/html/but_i_have.haml,
+  examples/example2/treate/html/content.haml,
+  examples/example2/treate/html/header.haml,
+  examples/example2/treate/html/main.haml,
+  examples/example2/treate/html/setup.rb,
+  examples/example2/treate/html/what_is.haml,
+  examples/example2/treate/markdown/but_i_have.txt,
+  examples/example2/treate/markdown/copyright.erb,
+  examples/example2/treate/markdown/setup.rb,
+  examples/example2/treate/markdown/title.txt,
+  examples/example2/treate/markdown/what_is.txt,
+  examples/example2/treate/readme/readme_notice.txt,
+  examples/example2/treate/readme/setup.rb, examples/example2/treate/setup.rb,
+  examples/example2/treate/textile/content/setup.rb,
+  examples/example2/treate/textile/copyright.erb,
+  examples/example2/treate/textile/header.erb,
+  examples/example2/treate/textile/main.erb: Update examples
+
+  * examples/example2/treate/html/but_i_have.haml,
+  examples/example2/treate/html/copyright.erb,
+  examples/example2/treate/html/copyright.haml,
+  examples/example2/treate/html/header.erb,
+  examples/example2/treate/html/header.haml,
+  examples/example2/treate/html/main.erb,
+  examples/example2/treate/html/main.haml,
+  examples/example2/treate/html/what_is.erb,
+  examples/example2/treate/html/what_is.haml,
+  examples/example2/treate/setup.rb,
+  examples/example2/treate/text/copyright.erb,
+  examples/example2/treate/text/main.erb,
+  examples/example2/treate/textile/content/setup.rb,
+  examples/example2/treate/textile/copyright.erb,
+  examples/example2/treate/textile/header.erb,
+  examples/example2/treate/textile/main.erb: Update templates
+
+  * lib/templater/template.rb: yield yields only one section in the list at a
+  time.
+
+  * examples/example2/treate/setup.rb, lib/templater/template.rb: Fix block
+  error
+
+  * examples/example1/custom/html/body/setup.rb,
+  examples/example1/custom/html/setup.rb,
+  examples/example1/default/html/body/setup.rb,
+  examples/example1/default/html/setup.rb, examples/example1/run.rb,
+  lib/templater/main.rb, lib/templater/providers/erb.rb,
+  lib/templater/template.rb, lib/templater/template_path.rb: Fix errors
+
+  * examples/example1/custom/html/body/setup.rb,
+  examples/example1/default/html/body/setup.rb,
+  examples/example1/default/html/main.haml,
+  examples/example1/default/html/setup.rb, examples/example1/default/setup.rb,
+  examples/example1/run.rb, examples/example2/run.rb,
+  examples/example2/treate/html/copyright.erb,
+  examples/example2/treate/html/header.erb,
+  examples/example2/treate/html/main.erb,
+  examples/example2/treate/html/main.haml,
+  examples/example2/treate/html/what_is.erb, examples/example2/treate/setup.rb,
+  examples/example2/treate/text/copyright.erb,
+  examples/example2/treate/text/main.erb, lib/templater.rb,
+  lib/templater/main.rb, lib/templater/providers/erb.rb,
+  lib/templater/providers/file.rb, lib/templater/providers/haml.rb,
+  lib/templater/providers/markaby.rb,
+  lib/templater/providers/section_provider.rb, lib/templater/template.rb,
+  lib/templater/template_path.rb, spec/basic_spec.rb: Add examples, separate
+  files. Add SectionProvider api
+
+2008-06-09  Loren Segal <lsegal@soen.ca>
+
+  * examples/example1/custom/html/body/important.html,
+  examples/example1/custom/html/body/setup.rb,
+  examples/example1/default/html/body/setup.rb,
+  examples/example1/default/html/setup.rb, examples/example1/run.rb,
+  lib/templater/template.rb: Working example
+
+  * .gitignore, Rakefile, examples/example1/custom/html/body/important.html,
+  examples/example1/custom/html/body/setup.rb,
+  examples/example1/custom/html/setup.rb,
+  examples/example1/default/html/body/info.erb,
+  examples/example1/default/html/body/setup.rb,
+  examples/example1/default/html/main.haml,
+  examples/example1/default/html/setup.rb, examples/example1/default/setup.rb,
+  examples/example1/run.rb, lib/templater.rb, lib/templater/template.rb,
+  spec/basic_spec.rb: Initial import
