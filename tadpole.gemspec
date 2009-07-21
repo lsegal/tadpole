@@ -1,7 +1,7 @@
 SPEC = Gem::Specification.new do |s|
   s.name          = "tadpole"
-  s.version       = "0.1.5"
-  s.date          = "2009-07-15"
+  s.version       = "0.1.6"
+  s.date          = "2009-07-20"
   s.author        = "Loren Segal"
   s.email         = "lsegal@soen.ca"
   s.homepage      = "http://www.soen.ca"
