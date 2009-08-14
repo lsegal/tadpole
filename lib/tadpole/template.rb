@@ -123,7 +123,12 @@ module Tadpole
       self.options = old_opts
       out
     rescue => e
-      provider = find_section_provider(current_section)
+      begin
+        provider = find_section_provider(current_section)
+      rescue ArgumentError
+        raise e
+      end
+      
       line = provider.full_path
       line += " (template)" if provider.is_a?(SectionProviders::TemplateProvider)
       line += ":1:in#{@compiled_sections ? ' compiled' : ''} section `#{current_section}'"
