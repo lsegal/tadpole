@@ -117,11 +117,7 @@ module Tadpole
     def run(opts = {}, &block)
       return '' if run_before_run.is_a?(FalseClass)
       
-      old_opts = options
-      self.options = options.to_hash.update(opts)
-      out = run_sections(@compiled_sections || sections, &block)
-      self.options = old_opts
-      out
+      run_sections(@compiled_sections || sections, false, opts, &block)
     rescue => e
       begin
         provider = find_section_provider(current_section)
@@ -139,27 +135,29 @@ module Tadpole
     alias to_s run
     
     def run_sections(sects, break_first = false, locals = {}, &block)
-      out = ''
-      raise ArgumentError, "Template(#{path}) is missing sections" unless sects
-      sects = sects.first if sects.first.is_a?(Array)
-      sects.each_with_index do |section, i|
-        (break_first ? break : next) if section.is_a?(Array)
+      with_locals(locals) do
+        out = ''
+        raise ArgumentError, "Template(#{path}) is missing sections" unless sects
+        sects = sects.first if sects.first.is_a?(Array)
+        sects.each_with_index do |section, i|
+          (break_first ? break : next) if section.is_a?(Array)
         
-        self.current_section = section_name(section)
+          self.current_section = section_name(section)
         
-        next if run_before_sections.is_a?(FalseClass)
+          next if run_before_sections.is_a?(FalseClass)
 
-        if sects[i+1].is_a?(Array)
-          old, self.subsections = subsections, sects[i+1]
-          out += run_subsections(section, sects[i+1], locals, &block)
-          self.subsections = old
-        else
-          out += render(section, locals, true, &block)
-        end
+          if sects[i+1].is_a?(Array)
+            old, self.subsections = subsections, sects[i+1]
+            out += run_subsections(section, sects[i+1], locals, &block)
+            self.subsections = old
+          else
+            out += render(section, locals, true, &block)
+          end
         
-        break if break_first
+          break if break_first
+        end
+        out
       end
-      out
     end
     
     def run_subsections(section, subsections, locals = {}, &block)
@@ -237,6 +235,14 @@ module Tadpole
       else
         [nil, {}]
       end
+    end
+    
+    def with_locals(locals = {}, &block)
+      old_options = options
+      self.options = options.to_hash.merge(locals)
+      result = yield
+      self.options = old_options
+      result
     end
 
     def find_section_provider(section)
