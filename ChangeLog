@@ -1,4 +1,23 @@
+2009-08-14  Loren Segal <lsegal@soen.ca>
+
+  * ChangeLog, LICENSE, README.markdown, lib/tadpole.rb, tadpole.gemspec: Bump
+  version to 0.1.7
+
+  * lib/tadpole/template.rb, spec/examples/yield/1/setup.rb,
+  spec/examples/yield/2/2_1/b.erb, spec/examples/yield/2/2_1/setup.rb,
+  spec/examples/yield/2/2_2/c.erb, spec/examples/yield/2/2_2/setup.rb,
+  spec/examples/yield/2/a.erb, spec/examples/yield/2/setup.rb,
+  spec/examples/yield/setup.rb, spec/yield_spec.rb: Add specs for yielding
+  extra options
+
+  * lib/tadpole/template.rb, spec/examples/yield/setup.rb, spec/yield_spec.rb:
+  Allow yield() to update options
+
+  * lib/tadpole/template.rb: Improve error reporting for invalid templates.
+
 2009-07-20  Loren Segal <lsegal@soen.ca>
+
+  * ChangeLog: Add ChangeLog
 
   * lib/tadpole.rb, tadpole.gemspec: Bump to 0.1.6
 
