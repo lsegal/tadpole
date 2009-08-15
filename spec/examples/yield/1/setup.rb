@@ -7,11 +7,11 @@ def a
 end
 
 def b
-  foo + yieldall(:bar => 'BAR')
+  foo + yieldall(:foo => 'BAR', :bar => 'BAR')
 end
 
 def c
-  bar
+  foo
 end
 
 def d

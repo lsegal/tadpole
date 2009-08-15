@@ -103,10 +103,7 @@ module Tadpole
     def initialize(opts = {}, &block)
       self.options = opts
       @providers = {}
-      #self.sections(*sections)
       
-      init(&block)
-
       if Tadpole.caching
         @compiled_sections = compile_sections(sections) 
       end
@@ -116,8 +113,11 @@ module Tadpole
 
     def run(opts = {}, &block)
       return '' if run_before_run.is_a?(FalseClass)
-      
-      run_sections(@compiled_sections || sections, false, opts, &block)
+
+      with_options(opts) do
+        init
+        run_sections(@compiled_sections || sections, &block)
+      end
     rescue => e
       begin
         provider = find_section_provider(current_section)
@@ -135,25 +135,25 @@ module Tadpole
     alias to_s run
     
     def run_sections(sects, break_first = false, locals = {}, &block)
-      with_locals(locals) do
+      with_options(locals) do
         out = ''
         raise ArgumentError, "Template(#{path}) is missing sections" unless sects
         sects = sects.first if sects.first.is_a?(Array)
         sects.each_with_index do |section, i|
           (break_first ? break : next) if section.is_a?(Array)
-        
+      
           self.current_section = section_name(section)
-        
+      
           next if run_before_sections.is_a?(FalseClass)
 
           if sects[i+1].is_a?(Array)
             old, self.subsections = subsections, sects[i+1]
-            out += run_subsections(section, sects[i+1], locals, &block)
+            out += run_subsections(section, sects[i+1], &block)
             self.subsections = old
           else
-            out += render(section, locals, true, &block)
+            out += render(section, {}, true, &block)
           end
-        
+      
           break if break_first
         end
         out
@@ -192,21 +192,23 @@ module Tadpole
     end
     
     def render(section, locals = {}, call_method = false, &block)
-      case section
-      when String, Symbol
-        if call_method && respond_to?(section) 
-          send(section, &block)
+      with_options(locals) do
+        case section
+        when String, Symbol
+          if call_method && respond_to?(section) 
+            send(section, &block)
+          else
+            find_section_provider(section).render(options, &block)
+          end
+        when Template
+          section.run(options, &block)
+        when Module
+          section.new(options).run(&block)
+        when SectionProviders::SectionProvider
+          section.render(options, &block)
         else
-          find_section_provider(section).render(locals, &block)
+          raise MissingSectionError, "missing section #{section.inspect}"
         end
-      when Template
-        section.run(locals, &block)
-      when Module
-        section.new(options).run(locals, &block)
-      when SectionProviders::SectionProvider
-        section.render(locals, &block)
-      else
-        raise MissingSectionError, "missing section #{section.inspect}"
       end
     end
 
@@ -237,7 +239,7 @@ module Tadpole
       end
     end
     
-    def with_locals(locals = {}, &block)
+    def with_options(locals = {}, &block)
       old_options = options
       self.options = options.to_hash.merge(locals)
       result = yield
